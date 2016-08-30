@@ -33,6 +33,12 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kTableViewCellReuseIdentifier];
 }
 
+- (void)dismissAlertView {
+    if ([self.presentedViewController isKindOfClass:[NYAlertViewController class]]) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
 - (void)showStandardAlertView {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Example Title", nil)
                                                                              message:NSLocalizedString(@"Nullam id dolor id nibh ultricies vehicula ut id elit. Donec id elit non mi porta gravida at eget metus.", nil)
@@ -72,10 +78,10 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     alertViewController.swipeDismissalGestureEnabled = YES;
     alertViewController.transitionStyle = NYAlertViewControllerTransitionStyleFade;
     
-    alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:alertViewController.titleFont.pointSize];
-    alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Regular" size:alertViewController.messageFont.pointSize];
-    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:alertViewController.buttonTitleFont.pointSize];
-    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:alertViewController.cancelButtonTitleFont.pointSize];
+    alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:16.f];
+    alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Regular" size:14.f];
+    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
+    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
     
     for (int i = 0; i < actionCount; i++) {
         NSString *actionTitle = [NSString stringWithFormat:NSLocalizedString(@"Action %d", nil), i + 1];
@@ -92,6 +98,17 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
         }]];
     }
     
+    alertViewController.alertViewlayout = ({
+        NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
+        lout.titleViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.messageTextViewEdgeInsets = UIEdgeInsetsMake(20, 20, 20, 20);
+        lout.actionButtonContainerViewEdgeInsets = actionCount?UIEdgeInsetsMake(20, 20, 15, 20):UIEdgeInsetsZero;
+        lout.actionButtonHeight = 40.f;
+        lout.horizonSpacingBetweenActionButtons = 16.f;
+        lout.verticalSpacingBetweenActionButtons = 8.f;
+        lout;
+    });
+    
     [self presentViewController:alertViewController animated:YES completion:nil];
 }
 
@@ -100,10 +117,10 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     alertViewController.title = NSLocalizedString(@"Login", nil);
     alertViewController.message = NSLocalizedString(@"The submit action is disabled until text is entered in both text fields", nil);
     
-    alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:alertViewController.titleFont.pointSize];
-    alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Regular" size:alertViewController.messageFont.pointSize];
-    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:alertViewController.buttonTitleFont.pointSize];
-    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:alertViewController.cancelButtonTitleFont.pointSize];
+    alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:16.f];
+    alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Regular" size:14.f];
+    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
+    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
 
     NYAlertAction *submitAction = [NYAlertAction actionWithTitle:NSLocalizedString(@"Submit", nil)
                                                            style:UIAlertActionStyleDefault
@@ -141,6 +158,24 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
         textField.secureTextEntry = YES;
     }];
     
+    alertViewController.alertViewlayout = ({
+        NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
+        lout.titleViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.messageTextViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.textFieldContainerViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.verticalSpacingBetweenActionTextFields = 4.f;
+        lout.actionButtonContainerViewEdgeInsets = UIEdgeInsetsMake(20, 20, 15, 20);
+        lout.actionButtonHeight = 40.f;
+        lout.horizonSpacingBetweenActionButtons = 16.f;
+        lout.verticalSpacingBetweenActionButtons = 8.f;
+        lout;
+    });
+    
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
+        [iconButton setImage:[UIImage imageNamed:@"more_collection"] forState:UIControlStateNormal];
+        [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
+    }];
+    
     [self presentViewController:alertViewController animated:YES completion:nil];
 }
 
@@ -174,17 +209,30 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     mapView.region = MKCoordinateRegionMakeWithDistance(infiniteLoopCoordinate, 1000.0f, 1000.0f);
     [contentView addSubview:mapView];
     
-    [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[mapView(160)]|"
-                                                                        options:0
-                                                                        metrics:nil
-                                                                          views:NSDictionaryOfVariableBindings(mapView)]];
-    
-    [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[mapView]-|"
-                                                                        options:0
-                                                                        metrics:nil
-                                                                          views:NSDictionaryOfVariableBindings(mapView)]];
+    [mapView addConstraint:[NSLayoutConstraint constraintWithItem:mapView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0 constant:160.f]];
+    [contentView addConstraint:[NSLayoutConstraint constraintWithItem:mapView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+    [contentView addConstraint:[NSLayoutConstraint constraintWithItem:mapView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [contentView addConstraint:[NSLayoutConstraint constraintWithItem:mapView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeLeading multiplier:1 constant:0]];
+    [contentView addConstraint:[NSLayoutConstraint constraintWithItem:mapView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
     
     alertViewController.alertViewContentView = contentView;
+    
+    alertViewController.alertViewlayout = ({
+        NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
+        lout.titleViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.messageTextViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.contentViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.actionButtonContainerViewEdgeInsets = UIEdgeInsetsMake(20, 20, 15, 20);
+        lout.actionButtonHeight = 40.f;
+        lout.horizonSpacingBetweenActionButtons = 16.f;
+        lout.verticalSpacingBetweenActionButtons = 8.f;
+        lout;
+    });
+    
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
+        [iconButton setImage:[UIImage imageNamed:@"more_collection"] forState:UIControlStateNormal];
+        [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
+    }];
     
     [self presentViewController:alertViewController animated:YES completion:nil];
 }
@@ -211,6 +259,23 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     alertViewController.alertViewContentView = datePicker;
     
+    alertViewController.alertViewlayout = ({
+        NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
+        lout.titleViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.messageTextViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.contentViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.actionButtonContainerViewEdgeInsets = UIEdgeInsetsMake(20, 20, 15, 20);
+        lout.actionButtonHeight = 40.f;
+        lout.horizonSpacingBetweenActionButtons = 16.f;
+        lout.verticalSpacingBetweenActionButtons = 8.f;
+        lout;
+    });
+    
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
+        [iconButton setImage:[UIImage imageNamed:@"more_collection"] forState:UIControlStateNormal];
+        [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
+    }];
+    
     [self presentViewController:alertViewController animated:YES completion:nil];
 }
 
@@ -226,6 +291,22 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
                                                           handler:^(NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
+    
+    alertViewController.alertViewlayout = ({
+        NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
+        lout.titleViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.messageTextViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.actionButtonContainerViewEdgeInsets = UIEdgeInsetsMake(20, 20, 15, 20);
+        lout.actionButtonHeight = 40.f;
+        lout.horizonSpacingBetweenActionButtons = 16.f;
+        lout.verticalSpacingBetweenActionButtons = 8.f;
+        lout;
+    });
+    
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
+        [iconButton setImage:[UIImage imageNamed:@"more_collection"] forState:UIControlStateNormal];
+        [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
+    }];
     
     [self presentViewController:alertViewController animated:YES completion:nil];
 }
@@ -271,6 +352,58 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
+    alertViewController.alertViewlayout = ({
+        NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
+        lout.titleViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.messageTextViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.actionButtonContainerViewEdgeInsets = UIEdgeInsetsMake(20, 20, 15, 20);
+        lout.actionButtonHeight = 40.f;
+        lout.horizonSpacingBetweenActionButtons = 16.f;
+        lout.verticalSpacingBetweenActionButtons = 8.f;
+        lout;
+    });
+    
+    [self presentViewController:alertViewController animated:YES completion:nil];
+}
+
+- (void)showCustomAlertViewWithTitleImage {
+    NYAlertViewController *alertViewController = [[NYAlertViewController alloc] initWithNibName:nil bundle:nil];
+    alertViewController.titleImage = [UIImage imageNamed:@"more_collection"];
+    alertViewController.message = @"title with image. title with image. May you like it! May you like it! ";
+    
+    alertViewController.view.tintColor = self.view.tintColor;
+    alertViewController.backgroundTapDismissalGestureEnabled = YES;
+    alertViewController.swipeDismissalGestureEnabled = YES;
+    alertViewController.transitionStyle = NYAlertViewControllerTransitionStyleFade;
+    
+    alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:16.f];
+    alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Regular" size:14.f];
+    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
+    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
+    
+    [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Ok", nil)
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(NYAlertAction *action) {
+                                                              [self dismissViewControllerAnimated:YES completion:nil];
+                                                          }]];
+    
+    [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
+                                                            style:UIAlertActionStyleCancel
+                                                          handler:^(NYAlertAction *action) {
+                                                              [self dismissViewControllerAnimated:YES completion:nil];
+                                                          }]];
+    
+    alertViewController.alertViewlayout = ({
+        NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
+        lout.titleViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.messageTextViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.actionButtonContainerViewEdgeInsets = UIEdgeInsetsMake(20, 20, 15, 20);
+        lout.actionButtonHeight = 40.f;
+        lout.horizonSpacingBetweenActionButtons = 16.f;
+        lout.verticalSpacingBetweenActionButtons = 8.f;
+        lout;
+    });
+    
     [self presentViewController:alertViewController animated:YES completion:nil];
 }
 
@@ -312,6 +445,9 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
             
         case 8:
             [self showCustomUIAlertView];
+            break;
+        case 9:
+            [self showCustomAlertViewWithTitleImage];
             break;
     }
     

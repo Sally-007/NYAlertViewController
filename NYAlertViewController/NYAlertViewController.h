@@ -6,6 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "NYAlertViewLayout.h"
 
 @interface NYAlertAction : NSObject
 
@@ -33,6 +34,33 @@ typedef NS_ENUM(NSInteger, NYAlertViewControllerTransitionStyle) {
  Creates an alert view controller with the specified title and message
  */
 + (instancetype)alertControllerWithTitle:(NSString *)title message:(NSString *)message;
+
+/**
+ Creates an alert view controller with the specified title image and message
+ */
++ (instancetype)alertControllerWithTitleImage:(UIImage *)titleImage message:(NSString *)message;
+
+/**
+ *  set display corner icon button
+ *
+ *  @param configurationBlock
+ */
+- (void)setDisplayAlertViewCornerIconButtonWithConfigurationBlock:(void(^)(UIButton *iconButton))configurationBlock;
+
+/**
+ *  set hide corner icon button
+ */
+- (void)setHideAlertViewCornerIconButton;
+
+/**
+ *  The alert view's layout
+ */
+@property (nonatomic) NYAlertViewLayout *alertViewlayout;
+
+/**
+ The title image displayed as the alert view's title
+ */
+@property (nonatomic) UIImage *titleImage;
 
 /**
  The message displayed under the alert view's title

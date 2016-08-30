@@ -319,6 +319,14 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     return alertController;
 }
 
++ (instancetype)alertControllerWithTitleImage:(UIImage *)titleImage message:(NSString *)message {
+    NYAlertViewController *alertController = [[NYAlertViewController alloc] initWithNibName:nil bundle:nil];
+    alertController.titleImage = titleImage;
+    alertController.message = message;
+    
+    return alertController;
+}
+
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     
@@ -346,6 +354,19 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 }
 
 - (void)commonInit {
+//    _alertViewlayout = ({
+//        NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
+//        UIEdgeInsets commInsets = UIEdgeInsetsMake(0, 20, 0, 20);
+//        lout.titleViewEdgeInsets = commInsets;
+//        lout.messageTextViewEdgeInsets = commInsets;
+//        lout.contentViewEdgeInsets = commInsets;
+//        lout.textFieldContainerViewEdgeInsets = commInsets;
+//        lout.actionButtonContainerViewEdgeInsets = commInsets;
+//        lout.actionButtonHeight = 40.f;
+//        lout.horizonSpacingBetweenActionButtons = 16.f;
+//        lout.verticalSpacingBetweenActionButtons = 8.f;
+//        lout;
+//    });
     _actions = [NSArray array];
     _textFields = [NSArray array];
     
@@ -526,32 +547,80 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     action.handler(action);
 }
 
+- (void)setDisplayAlertViewCornerIconButtonWithConfigurationBlock:(void(^)(UIButton *iconButton))configurationBlock {
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    if (configurationBlock) {
+        configurationBlock(button);
+    }
+    [self.view setCornerIconButton:button];
+}
+
+- (void)setHideAlertViewCornerIconButton {
+    [self.view setCornerIconButton:nil];
+}
+
 #pragma mark - Getters/Setters
+
+- (void)setAlertViewlayout:(NYAlertViewLayout *)alertViewlayout {
+    _alertViewlayout = alertViewlayout;
+    [self.view setLayout:alertViewlayout];
+}
 
 - (void)setTitle:(NSString *)title {
     [super setTitle:title];
     
-    self.view.titleLabel.text = title;
+    if (title.length == 0) {
+        [self.view setTitleView:nil];
+    } else {
+        [self.view setTitleView:({
+            NYAlertTitleView *tview = [[NYAlertTitleView alloc]initWithTitle:title];
+            if (self.titleFont) {
+                tview.titleLabel.font = self.titleFont;
+            }
+            if (self.titleColor) {
+                tview.titleLabel.textColor = self.titleColor;
+            }
+            tview;
+        })];
+    }
+}
+
+- (void)setTitleImage:(UIImage *)titleImage {
+    _titleImage = titleImage;
+    
+    if (!titleImage) {
+        [self.view setTitleView:nil];
+    } else {
+        [self.view setTitleView:({
+            NYAlertTitleView *tview = [[NYAlertTitleView alloc]initWithTitleImage:titleImage];
+            tview;
+        })];
+    }
 }
 
 - (void)setMessage:(NSString *)message {
     _message = message;
-    self.view.messageTextView.text = message;
-}
-
-- (UIFont *)titleFont {
-    return self.view.titleLabel.font;
+    
+    if (message.length == 0) {
+        [self.view setMessageTextView:nil];
+    } else {
+        [self.view setMessageTextView:({
+            NYAlertTextView *textView = [[NYAlertTextView alloc]initWithFrame:CGRectZero];
+            textView.textColor = self.messageColor;
+            textView.font = self.messageFont;
+            textView.text = message;
+            textView;
+        })];
+    }
 }
 
 - (void)setTitleFont:(UIFont *)titleFont {
-    self.view.titleLabel.font = titleFont;
-}
-
-- (UIFont *)messageFont {
-    return self.view.messageTextView.font;
+    _titleFont = titleFont;
+    self.view.titleView.titleLabel.font = titleFont;
 }
 
 - (void)setMessageFont:(UIFont *)messageFont {
+    _messageFont = messageFont;
     self.view.messageTextView.font = messageFont;
 }
 
@@ -591,19 +660,13 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     }];
 }
 
-- (UIColor *)titleColor {
-    return self.view.titleLabel.textColor;
-}
-
 - (void)setTitleColor:(UIColor *)titleColor {
-    self.view.titleLabel.textColor = titleColor;
-}
-
-- (UIColor *)messageColor {
-    return self.view.messageTextView.textColor;
+    _titleColor = titleColor;
+    self.view.titleView.titleLabel.textColor = titleColor;
 }
 
 - (void)setMessageColor:(UIColor *)messageColor {
+    _messageColor = messageColor;
     self.view.messageTextView.textColor = messageColor;
 }
 

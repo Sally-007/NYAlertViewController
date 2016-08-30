@@ -6,6 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "NYAlertViewLayout.h"
+/**
+ *  给定默认设置的 textView
+ */
+@interface NYAlertTextView : UITextView
+
+@end
 
 typedef NS_ENUM(NSInteger, NYAlertViewButtonType) {
     NYAlertViewButtonTypeFilled,
@@ -26,10 +33,28 @@ typedef NS_ENUM(NSInteger, NYAlertViewButtonType) {
 
 @end
 
+
+@interface NYAlertTitleView : UIView
+
+@property (nonatomic, readonly) UILabel *titleLabel;
+@property (nonatomic, readonly) UIImageView *titleImageView;
+
+- (instancetype)initWithTitle:(NSString *)title;
+- (instancetype)initWithTitleImage:(UIImage *)titleImage;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+
+@end
+
+
 @interface NYAlertView : UIView
 
-@property UILabel *titleLabel;
-@property UITextView *messageTextView;
+@property (nonatomic) NYAlertViewLayout *layout;
+
+@property (nonatomic) UIButton *cornerIconButton;
+@property (nonatomic) NYAlertTitleView *titleView;
+@property (nonatomic) NYAlertTextView *messageTextView;
 @property (nonatomic) UIView *contentView;
 
 @property (nonatomic) UIFont *buttonTitleFont;
@@ -50,9 +75,8 @@ typedef NS_ENUM(NSInteger, NYAlertViewButtonType) {
 
 @property (nonatomic, readonly) NSLayoutConstraint *backgroundViewVerticalCenteringConstraint;
 
-//@property (nonatomic) NSArray *actions;
-@property (nonatomic) NSArray *actionButtons;
+@property (nonatomic) NSArray<NYAlertViewButton *> *actionButtons;
 
-@property (nonatomic) NSArray *textFields;
+@property (nonatomic) NSArray<UITextField *> *textFields;
 
 @end

@@ -16,6 +16,7 @@
 		0EF9AD811B5B15C7000C7F1D /* NYAlertViewDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0EF9AD801B5B15C7000C7F1D /* NYAlertViewDemoTests.m */; };
 		0EF9AD9C1B5B1785000C7F1D /* NYAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0EF9AD8E1B5B1785000C7F1D /* NYAlertView.m */; };
 		0EF9AD9D1B5B1785000C7F1D /* NYAlertViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0EF9AD901B5B1785000C7F1D /* NYAlertViewController.m */; };
+		987B63201D759FEA00D70501 /* NYAlertViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 987B631F1D759FEA00D70501 /* NYAlertViewLayout.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,8 @@
 		0EF9AD8E1B5B1785000C7F1D /* NYAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NYAlertView.m; sourceTree = "<group>"; };
 		0EF9AD8F1B5B1785000C7F1D /* NYAlertViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NYAlertViewController.h; sourceTree = "<group>"; };
 		0EF9AD901B5B1785000C7F1D /* NYAlertViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NYAlertViewController.m; sourceTree = "<group>"; };
+		987B631E1D759FEA00D70501 /* NYAlertViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NYAlertViewLayout.h; sourceTree = "<group>"; };
+		987B631F1D759FEA00D70501 /* NYAlertViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NYAlertViewLayout.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +138,8 @@
 				0EF9AD901B5B1785000C7F1D /* NYAlertViewController.m */,
 				0EF9AD8D1B5B1785000C7F1D /* NYAlertView.h */,
 				0EF9AD8E1B5B1785000C7F1D /* NYAlertView.m */,
+				987B631E1D759FEA00D70501 /* NYAlertViewLayout.h */,
+				987B631F1D759FEA00D70501 /* NYAlertViewLayout.m */,
 			);
 			name = NYAlertViewController;
 			path = ../../NYAlertViewController;
@@ -242,6 +247,7 @@
 			files = (
 				0EF9AD6D1B5B15C7000C7F1D /* DemoViewController.m in Sources */,
 				0EF9AD6A1B5B15C7000C7F1D /* AppDelegate.m in Sources */,
+				987B63201D759FEA00D70501 /* NYAlertViewLayout.m in Sources */,
 				0EF9AD671B5B15C7000C7F1D /* main.m in Sources */,
 				0EF9AD9C1B5B1785000C7F1D /* NYAlertView.m in Sources */,
 				0EF9AD9D1B5B1785000C7F1D /* NYAlertViewController.m in Sources */,
