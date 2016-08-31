@@ -16,7 +16,7 @@
 
 @implementation NYAlertAction
 
-+ (instancetype)actionWithTitle:(NSString *)title style:(NYAlertActionStyle)style handler:(void (^)(NYAlertAction *action))handler {
++ (instancetype)actionWithTitle:(NSString *)title style:(NYAlertActionStyle)style handler:(void (^)(NYAlertViewController *alertViewController, NYAlertAction *action))handler {
     NYAlertAction *action = [[NYAlertAction alloc] init];
     action.title = title;
     action.style = style;
@@ -598,7 +598,7 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 
 - (void)actionButtonPressed:(UIButton *)button {
     NYAlertAction *action = self.actions[button.tag];
-    action.handler(action);
+    action.handler(self, action);
 }
 
 - (void)setDisplayAlertViewCornerIconButtonWithConfigurationBlock:(void(^)(UIButton *iconButton))configurationBlock {
@@ -865,7 +865,7 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 
 - (void)buttonPressed:(UIButton *)sender {
     NYAlertAction *action = self.actions[sender.tag];
-    action.handler(action);
+    action.handler(self, action);
 }
 
 #pragma mark - UIViewControllerTransitioningDelegate

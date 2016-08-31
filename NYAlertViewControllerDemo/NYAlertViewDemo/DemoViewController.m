@@ -63,7 +63,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
             actionStyle = NYAlertActionStyleCancel;
         }
         
-        [alertViewController addAction:[NYAlertAction actionWithTitle:actionTitle style:actionStyle handler:^(NYAlertAction *action) {
+        [alertViewController addAction:[NYAlertAction actionWithTitle:actionTitle style:actionStyle handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
             [self dismissViewControllerAnimated:YES completion:nil];
         }]];
     }
@@ -94,7 +94,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
 
     NYAlertAction *submitAction = [NYAlertAction actionWithTitle:NSLocalizedString(@"Submit", nil)
                                                            style:NYAlertActionStyleDefault
-                                                         handler:^(NYAlertAction *action) {
+                                                         handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                              [self dismissViewControllerAnimated:YES completion:nil];
                                                          }];
     submitAction.enabled = NO;
@@ -113,7 +113,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
                                                             style:NYAlertActionStyleCancel
-                                                          handler:^(NYAlertAction *action) {
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
@@ -154,13 +154,13 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Delete", nil)
                                                             style:NYAlertActionStyleDestructive
-                                                          handler:^(NYAlertAction *action) {
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
                                                             style:NYAlertActionStyleCancel
-                                                          handler:^(NYAlertAction *action) {
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
@@ -215,13 +215,13 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Select", nil)
                                                             style:NYAlertActionStyleDefault
-                                                          handler:^(NYAlertAction *action) {
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
                                                             style:NYAlertActionStyleCancel
-                                                          handler:^(NYAlertAction *action) {
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
@@ -258,7 +258,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
                                                             style:NYAlertActionStyleCancel
-                                                          handler:^(NYAlertAction *action) {
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
@@ -312,13 +312,13 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Ok", nil)
                                                             style:NYAlertActionStyleDefault
-                                                          handler:^(NYAlertAction *action) {
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
                                                             style:NYAlertActionStyleCancel
-                                                          handler:^(NYAlertAction *action) {
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
@@ -367,13 +367,13 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
                                                             style:NYAlertActionStyleCancel
-                                                          handler:^(NYAlertAction *action) {
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Ok", nil)
                                                             style:NYAlertActionStyleDefault
-                                                          handler:^(NYAlertAction *action) {
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     alertViewController.buttonCornerRadius = 2.f;

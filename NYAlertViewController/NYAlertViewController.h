@@ -15,13 +15,14 @@ typedef NS_ENUM(NSInteger, NYAlertActionStyle) {
     NYAlertActionStyleDestructive
 };
 
+@class NYAlertViewController;
 @interface NYAlertAction : NSObject
 
-+ (instancetype)actionWithTitle:(NSString *)title style:(NYAlertActionStyle)style handler:(void (^)(NYAlertAction *action))handler;
++ (instancetype)actionWithTitle:(NSString *)title style:(NYAlertActionStyle)style handler:(void (^)(NYAlertViewController *alertViewController, NYAlertAction *action))handler;
 
 @property (nonatomic) NSString *title;
 @property (nonatomic) NYAlertActionStyle style;
-@property (nonatomic, strong) void (^handler)(NYAlertAction *action);
+@property (nonatomic, strong) void (^handler)(NYAlertViewController *alertViewController, NYAlertAction *action);
 @property (nonatomic) BOOL enabled;
 
 @end
