@@ -601,10 +601,10 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     action.handler(self, action);
 }
 
-- (void)setDisplayAlertViewCornerIconButtonWithConfigurationBlock:(void(^)(UIButton *iconButton))configurationBlock {
+- (void)setDisplayAlertViewCornerIconButtonWithConfigurationBlock:(void(^)(NYAlertViewController *alertViewController, UIButton *iconButton))configurationBlock {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     if (configurationBlock) {
-        configurationBlock(button);
+        configurationBlock(self, button);
     }
     [self.alertView setCornerIconButton:button];
 }

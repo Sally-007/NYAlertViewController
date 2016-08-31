@@ -53,7 +53,7 @@ typedef NS_ENUM(NSInteger, NYAlertViewControllerTransitionStyle) {
  *
  *  @param configurationBlock
  */
-- (void)setDisplayAlertViewCornerIconButtonWithConfigurationBlock:(void(^)(UIButton *iconButton))configurationBlock;
+- (void)setDisplayAlertViewCornerIconButtonWithConfigurationBlock:(void(^)(NYAlertViewController *alertViewController, UIButton *iconButton))configurationBlock;
 
 /**
  *  set hide corner icon button

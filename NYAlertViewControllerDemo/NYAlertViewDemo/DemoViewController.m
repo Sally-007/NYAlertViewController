@@ -141,7 +141,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
         lout;
     });
     
-    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(NYAlertViewController *alertViewController, UIButton *iconButton) {
         [iconButton setImage:[UIImage imageNamed:@"dialog_close"] forState:UIControlStateNormal];
         [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
     }];
@@ -199,7 +199,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
         lout;
     });
     
-    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(NYAlertViewController *alertViewController, UIButton *iconButton) {
         [iconButton setImage:[UIImage imageNamed:@"dialog_close"] forState:UIControlStateNormal];
         [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
     }];
@@ -241,7 +241,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
         lout;
     });
     
-    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(NYAlertViewController *alertViewController, UIButton *iconButton) {
         [iconButton setImage:[UIImage imageNamed:@"dialog_close"] forState:UIControlStateNormal];
         [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
     }];
@@ -273,7 +273,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
         lout;
     });
     
-    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(NYAlertViewController *alertViewController, UIButton *iconButton) {
         [iconButton setImage:[UIImage imageNamed:@"dialog_close"] forState:UIControlStateNormal];
         [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
     }];
@@ -378,7 +378,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
                                                           }]];
     alertViewController.buttonCornerRadius = 2.f;
     
-    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(NYAlertViewController *alertViewController, UIButton *iconButton) {
         [iconButton setImage:[UIImage imageNamed:@"dialog_close"] forState:UIControlStateNormal];
         [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
     }];
