@@ -108,10 +108,6 @@
     self.cornerRadius = 4.0f;
     self.clipsToBounds = YES;
     
-    [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [self setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
-    [self setTitleColor:[UIColor whiteColor] forState:UIControlStateDisabled];
-    
     [self tintColorDidChange];
 }
 

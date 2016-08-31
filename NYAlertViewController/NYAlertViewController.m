@@ -771,15 +771,27 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     if (state == UIControlStateNormal) {
         switch (style) {
             case NYAlertActionStyleDefault: {
-                self.buttonColorForStateDictionary[@(state)] = backgroundColor;
+                if (backgroundColor) {
+                    self.buttonColorForStateDictionary[@(state)] = backgroundColor;
+                } else {
+                    [self.buttonColorForStateDictionary removeObjectForKey:@(state)];
+                }
                 break;
             }
             case NYAlertActionStyleCancel: {
-                self.cancelButtonColorForStateDictionary[@(state)] = backgroundColor;
+                if (backgroundColor) {
+                    self.cancelButtonColorForStateDictionary[@(state)] = backgroundColor;
+                } else {
+                    [self.cancelButtonColorForStateDictionary removeObjectForKey:@(state)];
+                }
                 break;
             }
             case NYAlertActionStyleDestructive: {
-                self.destructiveButtonColorForStateDictionary[@(state)] = backgroundColor;
+                if (backgroundColor) {
+                    self.destructiveButtonColorForStateDictionary[@(state)] = backgroundColor;
+                } else {
+                    [self.destructiveButtonColorForStateDictionary removeObjectForKey:@(state)];
+                }
                 break;
             }
         }
@@ -796,20 +808,30 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 
 - (void)setActionButtonBackgroundImage:(UIImage *)backgroundImage forStyle:(NYAlertActionStyle)style state:(UIControlState)state {
     
-    if (state == UIControlStateNormal) {
-        switch (style) {
-            case NYAlertActionStyleDefault: {
+    switch (style) {
+        case NYAlertActionStyleDefault: {
+            if (backgroundImage) {
                 self.buttonBackgroundImageForStateDictionary[@(state)] = backgroundImage;
-                break;
+            } else {
+                [self.buttonBackgroundImageForStateDictionary removeObjectForKey:@(state)];
             }
-            case NYAlertActionStyleCancel: {
+            break;
+        }
+        case NYAlertActionStyleCancel: {
+            if (backgroundImage) {
                 self.cancelButtonBackgroundImageForStateDictionary[@(state)] = backgroundImage;
-                break;
+            } else {
+                [self.cancelButtonBackgroundImageForStateDictionary removeObjectForKey:@(state)];
             }
-            case NYAlertActionStyleDestructive: {
+            break;
+        }
+        case NYAlertActionStyleDestructive: {
+            if (backgroundImage) {
                 self.destructiveButtonBackgroundImageForStateDictionary[@(state)] = backgroundImage;
-                break;
+            } else {
+                [self.destructiveButtonBackgroundImageForStateDictionary removeObjectForKey:@(state)];
             }
+            break;
         }
     }
     
@@ -824,20 +846,30 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 
 - (void)setActionButtonTitleColor:(UIColor *)titleColor forStyle:(NYAlertActionStyle)style state:(UIControlState)state {
     
-    if (state == UIControlStateNormal) {
-        switch (style) {
-            case NYAlertActionStyleDefault: {
+    switch (style) {
+        case NYAlertActionStyleDefault: {
+            if (titleColor) {
                 self.buttonTitleColorForStateDictionary[@(state)] = titleColor;
-                break;
+            } else {
+                [self.buttonTitleColorForStateDictionary removeObjectForKey:@(state)];
             }
-            case NYAlertActionStyleCancel: {
+            break;
+        }
+        case NYAlertActionStyleCancel: {
+            if (titleColor) {
                 self.cancelButtonTitleColorForStateDictionary[@(state)] = titleColor;
-                break;
+            } else {
+                [self.cancelButtonTitleColorForStateDictionary removeObjectForKey:@(state)];
             }
-            case NYAlertActionStyleDestructive: {
+            break;
+        }
+        case NYAlertActionStyleDestructive: {
+            if (titleColor) {
                 self.destructiveButtonTitleColorForStateDictionary[@(state)] = titleColor;
-                break;
+            } else {
+                [self.destructiveButtonTitleColorForStateDictionary removeObjectForKey:@(state)];
             }
+            break;
         }
     }
     
