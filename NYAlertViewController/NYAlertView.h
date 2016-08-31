@@ -57,18 +57,6 @@ typedef NS_ENUM(NSInteger, NYAlertViewButtonType) {
 @property (nonatomic) NYAlertTextView *messageTextView;
 @property (nonatomic) UIView *contentView;
 
-@property (nonatomic) UIFont *buttonTitleFont;
-@property (nonatomic) UIFont *cancelButtonTitleFont;
-@property (nonatomic) UIFont *destructiveButtonTitleFont;
-
-@property (nonatomic) UIColor *buttonColor;
-@property (nonatomic) UIColor *buttonTitleColor;
-@property (nonatomic) UIColor *cancelButtonColor;
-@property (nonatomic) UIColor *cancelButtonTitleColor;
-@property (nonatomic) UIColor *destructiveButtonColor;
-@property (nonatomic) UIColor *destructiveButtonTitleColor;
-
-@property (nonatomic) CGFloat buttonCornerRadius;
 @property (nonatomic) CGFloat maximumWidth;
 
 @property (nonatomic, readonly) UIView *alertBackgroundView;

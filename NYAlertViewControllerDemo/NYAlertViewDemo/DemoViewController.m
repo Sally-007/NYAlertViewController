@@ -13,7 +13,6 @@
 
 @interface DemoViewController ()
 
-- (void)showStandardAlertView;
 - (void)showCustomAlertViewWithActionCount:(NSInteger)actionCount;
 - (void)showTextFieldAlertView;
 - (void)showMapViewAlertView;
@@ -39,35 +38,6 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     }
 }
 
-- (void)showStandardAlertView {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Example Title", nil)
-                                                                             message:NSLocalizedString(@"Nullam id dolor id nibh ultricies vehicula ut id elit. Donec id elit non mi porta gravida at eget metus.", nil)
-                                                                      preferredStyle:UIAlertControllerStyleAlert];
-    
-    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder = @"Username";
-    }];
-    
-    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder = @"Password";
-        textField.secureTextEntry = YES;
-    }];
-    
-    [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Destroy", nil)
-                                                        style:UIAlertActionStyleDestructive
-                                                      handler:^(UIAlertAction *action) {
-                                                          [self dismissViewControllerAnimated:YES completion:nil];
-                                                      }]];
-    
-    [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
-                                                        style:UIAlertActionStyleCancel
-                                                      handler:^(UIAlertAction *action) {
-                                                          [self dismissViewControllerAnimated:YES completion:nil];
-                                                      }]];
-    
-    [self presentViewController:alertController animated:YES completion:nil];
-}
-
 - (void)showCustomAlertViewWithActionCount:(NSInteger)actionCount {
     NYAlertViewController *alertViewController = [[NYAlertViewController alloc] initWithNibName:nil bundle:nil];
     alertViewController.title = NSLocalizedString(@"Example Title", nil);
@@ -80,17 +50,17 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:16.f];
     alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Regular" size:14.f];
-    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
-    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
+//    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
+//    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
     
     for (int i = 0; i < actionCount; i++) {
         NSString *actionTitle = [NSString stringWithFormat:NSLocalizedString(@"Action %d", nil), i + 1];
-        UIAlertActionStyle actionStyle = UIAlertActionStyleDefault;
+        NYAlertActionStyle actionStyle = NYAlertActionStyleDefault;
         
         // Set up the final action as a cancel button
         if (i == actionCount - 1) {
             actionTitle = NSLocalizedString(@"Cancel", nil);
-            actionStyle = UIAlertActionStyleCancel;
+            actionStyle = NYAlertActionStyleCancel;
         }
         
         [alertViewController addAction:[NYAlertAction actionWithTitle:actionTitle style:actionStyle handler:^(NYAlertAction *action) {
@@ -119,11 +89,11 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:16.f];
     alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Regular" size:14.f];
-    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
-    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
+//    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
+//    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
 
     NYAlertAction *submitAction = [NYAlertAction actionWithTitle:NSLocalizedString(@"Submit", nil)
-                                                           style:UIAlertActionStyleDefault
+                                                           style:NYAlertActionStyleDefault
                                                          handler:^(NYAlertAction *action) {
                                                              [self dismissViewControllerAnimated:YES completion:nil];
                                                          }];
@@ -142,7 +112,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
                                                   }];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
-                                                            style:UIAlertActionStyleCancel
+                                                            style:NYAlertActionStyleCancel
                                                           handler:^(NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
@@ -172,7 +142,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     });
     
     [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
-        [iconButton setImage:[UIImage imageNamed:@"more_collection"] forState:UIControlStateNormal];
+        [iconButton setImage:[UIImage imageNamed:@"dialog_close"] forState:UIControlStateNormal];
         [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
     }];
     
@@ -183,13 +153,13 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     NYAlertViewController *alertViewController = [[NYAlertViewController alloc] initWithNibName:nil bundle:nil];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Delete", nil)
-                                                            style:UIAlertActionStyleDestructive
+                                                            style:NYAlertActionStyleDestructive
                                                           handler:^(NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
-                                                            style:UIAlertActionStyleCancel
+                                                            style:NYAlertActionStyleCancel
                                                           handler:^(NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
@@ -230,7 +200,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     });
     
     [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
-        [iconButton setImage:[UIImage imageNamed:@"more_collection"] forState:UIControlStateNormal];
+        [iconButton setImage:[UIImage imageNamed:@"dialog_close"] forState:UIControlStateNormal];
         [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
     }];
     
@@ -244,13 +214,13 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     alertViewController.message = NSLocalizedString(@"Set the alertViewContentView property to add custom views to the alert view", nil);
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Select", nil)
-                                                            style:UIAlertActionStyleDefault
+                                                            style:NYAlertActionStyleDefault
                                                           handler:^(NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
-                                                            style:UIAlertActionStyleCancel
+                                                            style:NYAlertActionStyleCancel
                                                           handler:^(NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
@@ -272,7 +242,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     });
     
     [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
-        [iconButton setImage:[UIImage imageNamed:@"more_collection"] forState:UIControlStateNormal];
+        [iconButton setImage:[UIImage imageNamed:@"dialog_close"] forState:UIControlStateNormal];
         [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
     }];
     
@@ -287,7 +257,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     alertViewController.transitionStyle = NYAlertViewControllerTransitionStyleSlideFromBottom;
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
-                                                            style:UIAlertActionStyleCancel
+                                                            style:NYAlertActionStyleCancel
                                                           handler:^(NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
@@ -304,7 +274,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     });
     
     [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
-        [iconButton setImage:[UIImage imageNamed:@"more_collection"] forState:UIControlStateNormal];
+        [iconButton setImage:[UIImage imageNamed:@"dialog_close"] forState:UIControlStateNormal];
         [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
     }];
     
@@ -325,8 +295,8 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:18.0f];
     alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.0f];
-    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:alertViewController.buttonTitleFont.pointSize];
-    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:alertViewController.cancelButtonTitleFont.pointSize];
+//    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:alertViewController.buttonTitleFont.pointSize];
+//    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:alertViewController.cancelButtonTitleFont.pointSize];
     
     alertViewController.alertViewBackgroundColor = [UIColor colorWithWhite:0.19f alpha:1.0f];
     alertViewController.alertViewCornerRadius = 10.0f;
@@ -334,20 +304,20 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     alertViewController.titleColor = [UIColor colorWithRed:0.42f green:0.78 blue:0.32f alpha:1.0f];
     alertViewController.messageColor = [UIColor colorWithWhite:0.92f alpha:1.0f];
     
-    alertViewController.buttonColor = [UIColor colorWithRed:0.42f green:0.78 blue:0.32f alpha:1.0f];
-    alertViewController.buttonTitleColor = [UIColor colorWithWhite:0.19f alpha:1.0f];
-    
-    alertViewController.cancelButtonColor = [UIColor colorWithRed:0.42f green:0.78 blue:0.32f alpha:1.0f];
-    alertViewController.cancelButtonTitleColor = [UIColor colorWithWhite:0.19f alpha:1.0f];
+//    alertViewController.buttonColor = [UIColor colorWithRed:0.42f green:0.78 blue:0.32f alpha:1.0f];
+//    alertViewController.buttonTitleColor = [UIColor colorWithWhite:0.19f alpha:1.0f];
+//    
+//    alertViewController.cancelButtonColor = [UIColor colorWithRed:0.42f green:0.78 blue:0.32f alpha:1.0f];
+//    alertViewController.cancelButtonTitleColor = [UIColor colorWithWhite:0.19f alpha:1.0f];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Ok", nil)
-                                                            style:UIAlertActionStyleDefault
+                                                            style:NYAlertActionStyleDefault
                                                           handler:^(NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
-                                                            style:UIAlertActionStyleCancel
+                                                            style:NYAlertActionStyleCancel
                                                           handler:^(NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
@@ -378,20 +348,40 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:16.f];
     alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Regular" size:14.f];
-    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
-    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
+//    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
+//    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
+    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_white"] forStyle:NYAlertActionStyleCancel state:UIControlStateNormal];
+    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_white_hl"] forStyle:NYAlertActionStyleCancel state:UIControlStateHighlighted];
     
-    [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Ok", nil)
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:^(NYAlertAction *action) {
-                                                              [self dismissViewControllerAnimated:YES completion:nil];
-                                                          }]];
+    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_gold"] forStyle:NYAlertActionStyleDefault state:UIControlStateNormal];
+    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_gold_hl"] forStyle:NYAlertActionStyleDefault state:UIControlStateHighlighted];
+    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_disable"] forStyle:NYAlertActionStyleDefault state:UIControlStateDisabled];
+    
+    [alertViewController setActionButtonBackgroundColor:[UIColor clearColor] forStyle:NYAlertActionStyleCancel state:UIControlStateNormal];
+    [alertViewController setActionButtonBackgroundColor:[UIColor clearColor] forStyle:NYAlertActionStyleCancel state:UIControlStateDisabled];
+    [alertViewController setActionButtonBackgroundColor:[UIColor clearColor] forStyle:NYAlertActionStyleDefault state:UIControlStateNormal];
+    [alertViewController setActionButtonBackgroundColor:[UIColor clearColor] forStyle:NYAlertActionStyleDefault state:UIControlStateDisabled];
+    
+    [alertViewController setActionButtonTitleColor:[UIColor colorWithWhite:0 alpha:0.7] forStyle:NYAlertActionStyleCancel state:UIControlStateNormal];
+    [alertViewController setActionButtonTitleColor:[UIColor whiteColor] forStyle:NYAlertActionStyleDefault state:UIControlStateNormal];
     
     [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
-                                                            style:UIAlertActionStyleCancel
+                                                            style:NYAlertActionStyleCancel
                                                           handler:^(NYAlertAction *action) {
                                                               [self dismissViewControllerAnimated:YES completion:nil];
                                                           }]];
+    
+    [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Ok", nil)
+                                                            style:NYAlertActionStyleDefault
+                                                          handler:^(NYAlertAction *action) {
+                                                              [self dismissViewControllerAnimated:YES completion:nil];
+                                                          }]];
+    alertViewController.buttonCornerRadius = 2.f;
+    
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(UIButton *iconButton) {
+        [iconButton setImage:[UIImage imageNamed:@"dialog_close"] forState:UIControlStateNormal];
+        [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
+    }];
     
     alertViewController.alertViewlayout = ({
         NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];

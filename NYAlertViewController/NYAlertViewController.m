@@ -6,7 +6,6 @@
 //
 
 #import "NYAlertViewController.h"
-
 #import "NYAlertView.h"
 
 @interface NYAlertAction ()
@@ -17,7 +16,7 @@
 
 @implementation NYAlertAction
 
-+ (instancetype)actionWithTitle:(NSString *)title style:(UIAlertActionStyle)style handler:(void (^)(NYAlertAction *action))handler {
++ (instancetype)actionWithTitle:(NSString *)title style:(NYAlertActionStyle)style handler:(void (^)(NYAlertAction *action))handler {
     NYAlertAction *action = [[NYAlertAction alloc] init];
     action.title = title;
     action.style = style;
@@ -76,20 +75,10 @@ static CGFloat const kDefaultPresentationAnimationDuration = 0.7f;
         
         [[transitionContext containerView] addSubview:toViewController.view];
         
-        // If we're using the slide from top transition, apply a 3D rotation effect to the alert view as it animates in
-        if (self.transitionStyle == NYAlertViewControllerTransitionStyleSlideFromTop) {
-            CATransform3D transform = CATransform3DIdentity;
-            transform.m34 = -1.0f / 600.0f;
-            transform = CATransform3DRotate(transform,  M_PI_4 * 1.3f, 1.0f, 0.0f, 0.0f);
-            
-            toViewController.view.layer.zPosition = 100.0f;
-            toViewController.view.layer.transform = transform;
-        }
-        
         [UIView animateWithDuration:[self transitionDuration:transitionContext]
                               delay:0.0f
-             usingSpringWithDamping:0.76f
-              initialSpringVelocity:0.2f
+             usingSpringWithDamping:1.f
+              initialSpringVelocity:0.3f
                             options:0
                          animations:^{
                              toViewController.view.layer.transform = CATransform3DIdentity;
@@ -163,8 +152,8 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
         
         [UIView animateWithDuration:[self transitionDuration:transitionContext]
                               delay:0.0f
-             usingSpringWithDamping:0.8f
-              initialSpringVelocity:0.1f
+             usingSpringWithDamping:1.f
+              initialSpringVelocity:0.3f
                             options:0
                          animations:^{
                              fromViewController.view.frame = finalFrame;
@@ -198,109 +187,74 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 
 @end
 
-@interface NYAlertViewPresentationController : UIPresentationController
-
-@property CGFloat presentedViewControllerHorizontalInset;
-@property CGFloat presentedViewControllerVerticalInset;
-@property (nonatomic) BOOL backgroundTapDismissalGestureEnabled;
-@property UIView *backgroundDimmingView;
-
-@end
-
-@interface NYAlertViewPresentationController ()
-
-- (void)tapGestureRecognized:(UITapGestureRecognizer *)gestureRecognizer;
-
-@end
-
-@implementation NYAlertViewPresentationController
-
-- (void)presentationTransitionWillBegin {
-    self.presentedViewController.view.layer.cornerRadius = 6.0f;
-    self.presentedViewController.view.layer.masksToBounds = YES;
-    
-    self.backgroundDimmingView = [[UIView alloc] initWithFrame:CGRectZero];
-    [self.backgroundDimmingView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    self.backgroundDimmingView.alpha = 0.0f;
-    self.backgroundDimmingView.backgroundColor = [UIColor blackColor];
-    [self.containerView addSubview:self.backgroundDimmingView];
-    
-    [self.containerView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundDimmingView]|"
-                                                                               options:0
-                                                                               metrics:nil
-                                                                                 views:NSDictionaryOfVariableBindings(_backgroundDimmingView)]];
-    
-    [self.containerView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundDimmingView]|"
-                                                                               options:0
-                                                                               metrics:nil
-                                                                                 views:NSDictionaryOfVariableBindings(_backgroundDimmingView)]];
-    
-    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognized:)];
-    [self.backgroundDimmingView addGestureRecognizer:tapGestureRecognizer];
-    
-    // Shrink the presenting view controller, and animate in the dark background view
-    id <UIViewControllerTransitionCoordinator> transitionCoordinator = [self.presentingViewController transitionCoordinator];
-    [transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-        self.backgroundDimmingView.alpha = 0.7f;
-    }
-                                           completion:nil];
-}
-
-- (BOOL)shouldPresentInFullscreen {
-    return NO;
-}
-
-- (BOOL)shouldRemovePresentersView {
-    return NO;
-}
-
-- (void)presentationTransitionDidEnd:(BOOL)completed {
-    [super presentationTransitionDidEnd:completed];
-    
-    if (!completed) {
-        [self.backgroundDimmingView removeFromSuperview];
-    }
-}
-
-- (void)dismissalTransitionWillBegin {
-    [super dismissalTransitionWillBegin];
-    
-    id <UIViewControllerTransitionCoordinator> transitionCoordinator = [self.presentingViewController transitionCoordinator];
-    [transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-        self.backgroundDimmingView.alpha = 0.0f;
-        
-        self.presentingViewController.view.transform = CGAffineTransformIdentity;
-    }
-                                           completion:nil];
-}
-
-- (void)containerViewWillLayoutSubviews {
-    [super containerViewWillLayoutSubviews];
-    
-    [self presentedView].frame = [self frameOfPresentedViewInContainerView];
-    self.backgroundDimmingView.frame = self.containerView.bounds;
-}
-
-- (void)dismissalTransitionDidEnd:(BOOL)completed {
-    [super dismissalTransitionDidEnd:completed];
-    
-    if (completed) {
-        [self.backgroundDimmingView removeFromSuperview];
-    }
-}
-
-- (void)tapGestureRecognized:(UITapGestureRecognizer *)gestureRecognizer {
-    if (self.backgroundTapDismissalGestureEnabled) {
-        [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
-    }
-}
-
-@end
 
 @interface NYAlertViewController () <UIGestureRecognizerDelegate, UIViewControllerTransitioningDelegate>
 
-@property NYAlertView *view;
-@property UIPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic) UIView *backgroundDimmingView;
+
+/**
+ The font used for buttons (actions with style NYAlertActionStyleDefault) in the alert view
+ */
+@property (nonatomic) UIFont *buttonTitleFont;
+
+/**
+ The font used for cancel buttons (actions with style NYAlertActionStyleCancel) in the alert view
+ */
+@property (nonatomic) UIFont *cancelButtonTitleFont;
+
+/**
+ The font used for destructive buttons (actions with style NYAlertActionStyleDestructive) in the alert view
+ */
+@property (nonatomic) UIFont *destructiveButtonTitleFont;
+
+/**
+ The background color for the alert view's buttons corresponsing to default style actions of diffrent states
+ */
+@property (nonatomic) NSMutableDictionary<NSNumber *, UIColor *> *buttonColorForStateDictionary;
+
+/**
+ The background color for the alert view's buttons corresponsing to cancel style actions of diffrent states
+ */
+@property (nonatomic) NSMutableDictionary<NSNumber *, UIColor *> *cancelButtonColorForStateDictionary;
+
+/**
+ The background color for the alert view's buttons corresponsing to destructive style actions of diffrent states
+ */
+@property (nonatomic) NSMutableDictionary<NSNumber *, UIColor *> *destructiveButtonColorForStateDictionary;
+
+/**
+ The background image for the alert view's buttons corresponsing to default style actions of diffrent states
+ */
+@property (nonatomic) NSMutableDictionary<NSNumber *, UIImage *> *buttonBackgroundImageForStateDictionary;
+
+/**
+ The background image for the alert view's buttons corresponsing to cancel style actions of diffrent states
+ */
+@property (nonatomic) NSMutableDictionary<NSNumber *, UIImage *> *cancelButtonBackgroundImageForStateDictionary;
+
+/**
+ The background image for the alert view's buttons corresponsing to destructive style actions of diffrent states
+ */
+@property (nonatomic) NSMutableDictionary<NSNumber *, UIImage *> *destructiveButtonBackgroundImageForStateDictionary;
+
+/**
+ The color used to display the title for buttons corresponsing to default style actions of diffrent states
+ */
+@property (nonatomic) NSMutableDictionary<NSNumber *, UIColor *> *buttonTitleColorForStateDictionary;
+
+/**
+ The color used to display the title for buttons corresponding to cancel style actions of diffrent states
+ */
+@property (nonatomic) NSMutableDictionary<NSNumber *, UIColor *> *cancelButtonTitleColorForStateDictionary;
+
+/**
+ The color used to display the title for buttons corresponsing to destructive style actions of diffrent states
+ */
+@property (nonatomic) NSMutableDictionary<NSNumber *, UIColor *> *destructiveButtonTitleColorForStateDictionary;
+
+@property (nonatomic) NYAlertView *alertView;
+@property (nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
 @property (nonatomic, strong) id<UIViewControllerTransitioningDelegate> transitioningDelegate;
 
 - (void)panGestureRecognized:(UIPanGestureRecognizer *)gestureRecognizer;
@@ -354,19 +308,7 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 }
 
 - (void)commonInit {
-//    _alertViewlayout = ({
-//        NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
-//        UIEdgeInsets commInsets = UIEdgeInsetsMake(0, 20, 0, 20);
-//        lout.titleViewEdgeInsets = commInsets;
-//        lout.messageTextViewEdgeInsets = commInsets;
-//        lout.contentViewEdgeInsets = commInsets;
-//        lout.textFieldContainerViewEdgeInsets = commInsets;
-//        lout.actionButtonContainerViewEdgeInsets = commInsets;
-//        lout.actionButtonHeight = 40.f;
-//        lout.horizonSpacingBetweenActionButtons = 16.f;
-//        lout.verticalSpacingBetweenActionButtons = 8.f;
-//        lout;
-//    });
+
     _actions = [NSArray array];
     _textFields = [NSArray array];
     
@@ -376,14 +318,17 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     _cancelButtonTitleFont = [UIFont boldSystemFontOfSize:16.0f];
     _destructiveButtonTitleFont = [UIFont systemFontOfSize:16.0f];
     
-    _buttonColor = [UIColor darkGrayColor];
-    _buttonTitleColor = [UIColor whiteColor];
-    _cancelButtonColor = [UIColor darkGrayColor];
-    _cancelButtonTitleColor = [UIColor whiteColor];
-    _destructiveButtonColor = [UIColor colorWithRed:1.0f green:0.23f blue:0.21f alpha:1.0f];
-    _destructiveButtonTitleColor = [UIColor whiteColor];
-    _disabledButtonColor = [UIColor lightGrayColor];
-    _disabledButtonTitleColor = [UIColor whiteColor];
+    _buttonColorForStateDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@(UIControlStateNormal):[UIColor darkGrayColor], @(UIControlStateDisabled):[UIColor lightGrayColor]}];
+    _cancelButtonColorForStateDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@(UIControlStateNormal):[UIColor darkGrayColor]}];
+    _destructiveButtonColorForStateDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@(UIControlStateNormal):[UIColor colorWithRed:1.0f green:0.23f blue:0.21f alpha:1.0f]}];
+    
+    _buttonBackgroundImageForStateDictionary = [NSMutableDictionary dictionary];
+    _cancelButtonBackgroundImageForStateDictionary = [NSMutableDictionary dictionary];
+    _destructiveButtonBackgroundImageForStateDictionary = [NSMutableDictionary dictionary];
+    
+    _buttonTitleColorForStateDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@(UIControlStateNormal):[UIColor whiteColor], @(UIControlStateDisabled):[UIColor whiteColor]}];
+    _cancelButtonTitleColorForStateDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@(UIControlStateNormal):[UIColor whiteColor]}];
+    _destructiveButtonTitleColorForStateDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@(UIControlStateNormal):[UIColor whiteColor]}];
     
     _buttonCornerRadius = 6.0f;
     
@@ -396,10 +341,30 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     self.panGestureRecognizer.delegate = self;
     self.panGestureRecognizer.enabled = NO;
     [self.view addGestureRecognizer:self.panGestureRecognizer];
+    
+    self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognized:)];
+    self.tapGestureRecognizer.delegate = self;
+    self.tapGestureRecognizer.enabled = NO;
+    [self.view addGestureRecognizer:self.tapGestureRecognizer];
 }
 
 - (void)loadView {
-    self.view = [[NYAlertView alloc] initWithFrame:CGRectZero];
+    self.view = [[UIView alloc]initWithFrame:CGRectZero];
+    
+    self.backgroundDimmingView = ({
+        UIView *dimmingView = [[UIView alloc]initWithFrame:CGRectZero];
+        dimmingView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        dimmingView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
+        dimmingView;
+    });
+    [self.view addSubview:self.backgroundDimmingView];
+    
+    self.alertView = ({
+        NYAlertView *aView = [[NYAlertView alloc]initWithFrame:CGRectZero];
+        aView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        aView;
+    });
+    [self.view addSubview:self.alertView];
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -407,19 +372,25 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 }
 
 - (CGFloat)maximumWidth {
-    return self.view.maximumWidth;
+    return self.alertView.maximumWidth;
 }
 
 - (void)setMaximumWidth:(CGFloat)maximumWidth {
-    self.view.maximumWidth = maximumWidth;
+    self.alertView.maximumWidth = maximumWidth;
 }
 
 - (UIView *)alertViewContentView {
-    return self.view.contentView;
+    return self.alertView.contentView;
 }
 
 - (void)setAlertViewContentView:(UIView *)alertViewContentView {
-    self.view.contentView = alertViewContentView;
+    self.alertView.contentView = alertViewContentView;
+}
+
+- (void)setBackgroundTapDismissalGestureEnabled:(BOOL)backgroundTapDismissalGestureEnabled {
+    _backgroundTapDismissalGestureEnabled = backgroundTapDismissalGestureEnabled;
+    
+    self.tapGestureRecognizer.enabled = backgroundTapDismissalGestureEnabled;
 }
 
 - (void)setSwipeDismissalGestureEnabled:(BOOL)swipeDismissalGestureEnabled {
@@ -429,12 +400,10 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 }
 
 - (void)panGestureRecognized:(UIPanGestureRecognizer *)gestureRecognizer {
-    self.view.backgroundViewVerticalCenteringConstraint.constant = [gestureRecognizer translationInView:self.view].y;
-    
-    NYAlertViewPresentationController *presentationController = (NYAlertViewPresentationController* )self.presentationController;
+    self.alertView.backgroundViewVerticalCenteringConstraint.constant = [gestureRecognizer translationInView:self.view].y;
     
     CGFloat windowHeight = CGRectGetHeight([UIApplication sharedApplication].keyWindow.bounds);
-    presentationController.backgroundDimmingView.alpha = 0.7f - (fabs([gestureRecognizer translationInView:self.view].y) / windowHeight);
+    self.backgroundDimmingView.alpha = 0.7f - (fabs([gestureRecognizer translationInView:self.view].y) / windowHeight);
     
     if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
         CGFloat verticalGestureVelocity = [gestureRecognizer velocityInView:self.view].y;
@@ -451,28 +420,24 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
             
             CGFloat animationDuration = 500.0f / fabs(verticalGestureVelocity);
             
-            self.view.backgroundViewVerticalCenteringConstraint.constant = backgroundViewYPosition;
+            self.alertView.backgroundViewVerticalCenteringConstraint.constant = backgroundViewYPosition;
             [UIView animateWithDuration:animationDuration
                                   delay:0.0f
-                 usingSpringWithDamping:0.8f
-                  initialSpringVelocity:0.2f
                                 options:0
                              animations:^{
-                                 presentationController.backgroundDimmingView.alpha = 0.0f;
+                                 self.backgroundDimmingView.alpha = 0.0f;
                                  [self.view layoutIfNeeded];
                              }
                              completion:^(BOOL finished) {
                                  [self dismissViewControllerAnimated:YES completion:nil];
                              }];
         } else {
-            self.view.backgroundViewVerticalCenteringConstraint.constant = 0.0f;
+            self.alertView.backgroundViewVerticalCenteringConstraint.constant = 0.0f;
             [UIView animateWithDuration:0.5f
                                   delay:0.0f
-                 usingSpringWithDamping:0.8f
-                  initialSpringVelocity:0.4f
                                 options:0
                              animations:^{
-                                 presentationController.backgroundDimmingView.alpha = 0.7f;
+                                 self.backgroundDimmingView.alpha = 0.7f;
                                  [self.view layoutIfNeeded];
                              }
                              completion:nil];
@@ -480,17 +445,24 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     }
 }
 
+- (void)tapGestureRecognized:(UITapGestureRecognizer *)gestureRecognizer {
+    
+    if (self.backgroundTapDismissalGestureEnabled) {
+        [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     [self createActionButtons];
-    self.view.textFields = self.textFields;
+    self.alertView.textFields = self.textFields;
 }
 
 - (void)setAlertViewBackgroundColor:(UIColor *)alertViewBackgroundColor {
     _alertViewBackgroundColor = alertViewBackgroundColor;
     
-    self.view.alertBackgroundView.backgroundColor = alertViewBackgroundColor;
+    self.alertView.alertBackgroundView.backgroundColor = alertViewBackgroundColor;
 }
 
 - (void)createActionButtons {
@@ -511,27 +483,109 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
         [button setTranslatesAutoresizingMaskIntoConstraints:NO];
         [button setTitle:action.title forState:UIControlStateNormal];
         
-        [button setTitleColor:self.disabledButtonTitleColor forState:UIControlStateDisabled];
-        [button setBackgroundColor:self.disabledButtonColor forState:UIControlStateDisabled];
-        
-        if (action.style == UIAlertActionStyleCancel) {
-            [button setTitleColor:self.cancelButtonTitleColor forState:UIControlStateNormal];
-            [button setTitleColor:self.cancelButtonTitleColor forState:UIControlStateHighlighted];
-            [button setBackgroundColor:self.cancelButtonColor forState:UIControlStateNormal];
-
-            button.titleLabel.font = self.cancelButtonTitleFont;
-        } else if (action.style == UIAlertActionStyleDestructive) {
-            [button setTitleColor:self.destructiveButtonTitleColor forState:UIControlStateNormal];
-            [button setTitleColor:self.destructiveButtonTitleColor forState:UIControlStateHighlighted];
-            [button setBackgroundColor:self.destructiveButtonColor forState:UIControlStateNormal];
-
-            button.titleLabel.font = self.destructiveButtonTitleFont;
-        } else {
-            [button setTitleColor:self.buttonTitleColor forState:UIControlStateNormal];
-            [button setTitleColor:self.buttonTitleColor forState:UIControlStateHighlighted];
-            [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
-
-            button.titleLabel.font = self.buttonTitleFont;
+        switch (action.style) {
+            case NYAlertActionStyleDefault: {
+                if (self.buttonTitleColorForStateDictionary[@(UIControlStateNormal)]) {
+                    [button setTitleColor:self.buttonTitleColorForStateDictionary[@(UIControlStateNormal)] forState:UIControlStateNormal];
+                }
+                if (self.buttonTitleColorForStateDictionary[@(UIControlStateHighlighted)]) {
+                    [button setTitleColor:self.buttonTitleColorForStateDictionary[@(UIControlStateHighlighted)] forState:UIControlStateHighlighted];
+                }
+                if (self.buttonTitleColorForStateDictionary[@(UIControlStateDisabled)]) {
+                    [button setTitleColor:self.buttonTitleColorForStateDictionary[@(UIControlStateDisabled)] forState:UIControlStateDisabled];
+                }
+                
+                if (self.buttonColorForStateDictionary[@(UIControlStateNormal)]) {
+                    [button setBackgroundColor:self.buttonColorForStateDictionary[@(UIControlStateNormal)] forState:UIControlStateNormal];
+                }
+                if (self.buttonColorForStateDictionary[@(UIControlStateHighlighted)]) {
+                    [button setBackgroundColor:self.buttonColorForStateDictionary[@(UIControlStateHighlighted)] forState:UIControlStateHighlighted];
+                }
+                if (self.buttonColorForStateDictionary[@(UIControlStateDisabled)]) {
+                    [button setBackgroundColor:self.buttonColorForStateDictionary[@(UIControlStateDisabled)] forState:UIControlStateDisabled];
+                }
+                
+                if (self.buttonBackgroundImageForStateDictionary[@(UIControlStateNormal)]) {
+                    [button setBackgroundImage:self.buttonBackgroundImageForStateDictionary[@(UIControlStateNormal)] forState:UIControlStateNormal];
+                }
+                if (self.buttonBackgroundImageForStateDictionary[@(UIControlStateHighlighted)]) {
+                    [button setBackgroundImage:self.buttonBackgroundImageForStateDictionary[@(UIControlStateHighlighted)] forState:UIControlStateHighlighted];
+                }
+                if (self.buttonBackgroundImageForStateDictionary[@(UIControlStateDisabled)]) {
+                    [button setBackgroundImage:self.buttonBackgroundImageForStateDictionary[@(UIControlStateDisabled)] forState:UIControlStateDisabled];
+                }
+                
+                button.titleLabel.font = self.buttonTitleFont;
+                break;
+            }
+            case NYAlertActionStyleCancel: {
+                if (self.cancelButtonTitleColorForStateDictionary[@(UIControlStateNormal)]) {
+                    [button setTitleColor:self.cancelButtonTitleColorForStateDictionary[@(UIControlStateNormal)] forState:UIControlStateNormal];
+                }
+                if (self.cancelButtonTitleColorForStateDictionary[@(UIControlStateHighlighted)]) {
+                    [button setTitleColor:self.cancelButtonTitleColorForStateDictionary[@(UIControlStateHighlighted)] forState:UIControlStateHighlighted];
+                }
+                if (self.cancelButtonTitleColorForStateDictionary[@(UIControlStateDisabled)]) {
+                    [button setTitleColor:self.cancelButtonTitleColorForStateDictionary[@(UIControlStateDisabled)] forState:UIControlStateDisabled];
+                }
+                
+                if (self.cancelButtonColorForStateDictionary[@(UIControlStateNormal)]) {
+                    [button setBackgroundColor:self.cancelButtonColorForStateDictionary[@(UIControlStateNormal)] forState:UIControlStateNormal];
+                }
+                if (self.cancelButtonColorForStateDictionary[@(UIControlStateHighlighted)]) {
+                    [button setBackgroundColor:self.cancelButtonColorForStateDictionary[@(UIControlStateHighlighted)] forState:UIControlStateHighlighted];
+                }
+                if (self.cancelButtonColorForStateDictionary[@(UIControlStateDisabled)]) {
+                    [button setBackgroundColor:self.cancelButtonColorForStateDictionary[@(UIControlStateDisabled)] forState:UIControlStateDisabled];
+                }
+                
+                if (self.cancelButtonBackgroundImageForStateDictionary[@(UIControlStateNormal)]) {
+                    [button setBackgroundImage:self.cancelButtonBackgroundImageForStateDictionary[@(UIControlStateNormal)] forState:UIControlStateNormal];
+                }
+                if (self.cancelButtonBackgroundImageForStateDictionary[@(UIControlStateHighlighted)]) {
+                    [button setBackgroundImage:self.cancelButtonBackgroundImageForStateDictionary[@(UIControlStateHighlighted)] forState:UIControlStateHighlighted];
+                }
+                if (self.cancelButtonBackgroundImageForStateDictionary[@(UIControlStateDisabled)]) {
+                    [button setBackgroundImage:self.cancelButtonBackgroundImageForStateDictionary[@(UIControlStateDisabled)] forState:UIControlStateDisabled];
+                }
+                
+                button.titleLabel.font = self.cancelButtonTitleFont;
+                break;
+            }
+            case NYAlertActionStyleDestructive: {
+                if (self.destructiveButtonTitleColorForStateDictionary[@(UIControlStateNormal)]) {
+                    [button setTitleColor:self.destructiveButtonTitleColorForStateDictionary[@(UIControlStateNormal)] forState:UIControlStateNormal];
+                }
+                if (self.destructiveButtonTitleColorForStateDictionary[@(UIControlStateHighlighted)]) {
+                    [button setTitleColor:self.destructiveButtonTitleColorForStateDictionary[@(UIControlStateHighlighted)] forState:UIControlStateHighlighted];
+                }
+                if (self.destructiveButtonTitleColorForStateDictionary[@(UIControlStateDisabled)]) {
+                    [button setTitleColor:self.destructiveButtonTitleColorForStateDictionary[@(UIControlStateDisabled)] forState:UIControlStateDisabled];
+                }
+                
+                if (self.destructiveButtonColorForStateDictionary[@(UIControlStateNormal)]) {
+                    [button setBackgroundColor:self.destructiveButtonColorForStateDictionary[@(UIControlStateNormal)] forState:UIControlStateNormal];
+                }
+                if (self.destructiveButtonColorForStateDictionary[@(UIControlStateHighlighted)]) {
+                    [button setBackgroundColor:self.destructiveButtonColorForStateDictionary[@(UIControlStateHighlighted)] forState:UIControlStateHighlighted];
+                }
+                if (self.destructiveButtonColorForStateDictionary[@(UIControlStateDisabled)]) {
+                    [button setBackgroundColor:self.destructiveButtonColorForStateDictionary[@(UIControlStateDisabled)] forState:UIControlStateDisabled];
+                }
+                
+                if (self.destructiveButtonBackgroundImageForStateDictionary[@(UIControlStateNormal)]) {
+                    [button setBackgroundImage:self.destructiveButtonBackgroundImageForStateDictionary[@(UIControlStateNormal)] forState:UIControlStateNormal];
+                }
+                if (self.destructiveButtonBackgroundImageForStateDictionary[@(UIControlStateHighlighted)]) {
+                    [button setBackgroundImage:self.destructiveButtonBackgroundImageForStateDictionary[@(UIControlStateHighlighted)] forState:UIControlStateHighlighted];
+                }
+                if (self.destructiveButtonBackgroundImageForStateDictionary[@(UIControlStateDisabled)]) {
+                    [button setBackgroundImage:self.destructiveButtonBackgroundImageForStateDictionary[@(UIControlStateDisabled)] forState:UIControlStateDisabled];
+                }
+                
+                button.titleLabel.font = self.destructiveButtonTitleFont;
+                break;
+            }
         }
         
         [buttons addObject:button];
@@ -539,7 +593,7 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
         action.actionButton = button;
     }
     
-    self.view.actionButtons = buttons;
+    self.alertView.actionButtons = buttons;
 }
 
 - (void)actionButtonPressed:(UIButton *)button {
@@ -552,27 +606,27 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     if (configurationBlock) {
         configurationBlock(button);
     }
-    [self.view setCornerIconButton:button];
+    [self.alertView setCornerIconButton:button];
 }
 
 - (void)setHideAlertViewCornerIconButton {
-    [self.view setCornerIconButton:nil];
+    [self.alertView setCornerIconButton:nil];
 }
 
 #pragma mark - Getters/Setters
 
 - (void)setAlertViewlayout:(NYAlertViewLayout *)alertViewlayout {
     _alertViewlayout = alertViewlayout;
-    [self.view setLayout:alertViewlayout];
+    [self.alertView setLayout:alertViewlayout];
 }
 
 - (void)setTitle:(NSString *)title {
     [super setTitle:title];
     
     if (title.length == 0) {
-        [self.view setTitleView:nil];
+        [self.alertView setTitleView:nil];
     } else {
-        [self.view setTitleView:({
+        [self.alertView setTitleView:({
             NYAlertTitleView *tview = [[NYAlertTitleView alloc]initWithTitle:title];
             if (self.titleFont) {
                 tview.titleLabel.font = self.titleFont;
@@ -589,9 +643,9 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     _titleImage = titleImage;
     
     if (!titleImage) {
-        [self.view setTitleView:nil];
+        [self.alertView setTitleView:nil];
     } else {
-        [self.view setTitleView:({
+        [self.alertView setTitleView:({
             NYAlertTitleView *tview = [[NYAlertTitleView alloc]initWithTitleImage:titleImage];
             tview;
         })];
@@ -602,9 +656,9 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     _message = message;
     
     if (message.length == 0) {
-        [self.view setMessageTextView:nil];
+        [self.alertView setMessageTextView:nil];
     } else {
-        [self.view setMessageTextView:({
+        [self.alertView setMessageTextView:({
             NYAlertTextView *textView = [[NYAlertTextView alloc]initWithFrame:CGRectZero];
             textView.textColor = self.messageColor;
             textView.font = self.messageFont;
@@ -616,21 +670,21 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 
 - (void)setTitleFont:(UIFont *)titleFont {
     _titleFont = titleFont;
-    self.view.titleView.titleLabel.font = titleFont;
+    self.alertView.titleView.titleLabel.font = titleFont;
 }
 
 - (void)setMessageFont:(UIFont *)messageFont {
     _messageFont = messageFont;
-    self.view.messageTextView.font = messageFont;
+    self.alertView.messageTextView.font = messageFont;
 }
 
 - (void)setButtonTitleFont:(UIFont *)buttonTitleFont {
     _buttonTitleFont = buttonTitleFont;
     
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
+    [self.alertView.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
         NYAlertAction *action = self.actions[idx];
         
-        if (action.style != UIAlertActionStyleCancel) {
+        if (action.style != NYAlertActionStyleCancel) {
             button.titleLabel.font = buttonTitleFont;
         }
     }];
@@ -639,10 +693,10 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 - (void)setCancelButtonTitleFont:(UIFont *)cancelButtonTitleFont {
     _cancelButtonTitleFont = cancelButtonTitleFont;
     
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
+    [self.alertView.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
         NYAlertAction *action = self.actions[idx];
         
-        if (action.style == UIAlertActionStyleCancel) {
+        if (action.style == NYAlertActionStyleCancel) {
             button.titleLabel.font = cancelButtonTitleFont;
         }
     }];
@@ -651,10 +705,10 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 - (void)setDestructiveButtonTitleFont:(UIFont *)destructiveButtonTitleFont {
     _destructiveButtonTitleFont = destructiveButtonTitleFont;
     
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
+    [self.alertView.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
         NYAlertAction *action = self.actions[idx];
         
-        if (action.style == UIAlertActionStyleDestructive) {
+        if (action.style == NYAlertActionStyleDestructive) {
             button.titleLabel.font = destructiveButtonTitleFont;
         }
     }];
@@ -662,131 +716,141 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 
 - (void)setTitleColor:(UIColor *)titleColor {
     _titleColor = titleColor;
-    self.view.titleView.titleLabel.textColor = titleColor;
+    self.alertView.titleView.titleLabel.textColor = titleColor;
 }
 
 - (void)setMessageColor:(UIColor *)messageColor {
     _messageColor = messageColor;
-    self.view.messageTextView.textColor = messageColor;
-}
-
-- (void)setButtonColor:(UIColor *)buttonColor {
-    _buttonColor = buttonColor;
-    
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
-        NYAlertAction *action = self.actions[idx];
-        
-        if (action.style != UIAlertActionStyleCancel) {
-            [button setBackgroundColor:buttonColor forState:UIControlStateNormal];
-        }
-    }];
-}
-
-- (void)setCancelButtonColor:(UIColor *)cancelButtonColor {
-    _cancelButtonColor = cancelButtonColor;
-    
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
-        NYAlertAction *action = self.actions[idx];
-        
-        if (action.style == UIAlertActionStyleCancel) {
-            [button setBackgroundColor:cancelButtonColor forState:UIControlStateNormal];
-        }
-    }];
-}
-
-- (void)setDestructiveButtonColor:(UIColor *)destructiveButtonColor {
-    _destructiveButtonColor = destructiveButtonColor;
-    
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
-        NYAlertAction *action = self.actions[idx];
-        
-        if (action.style == UIAlertActionStyleDestructive) {
-            [button setBackgroundColor:destructiveButtonColor forState:UIControlStateNormal];
-        }
-    }];
-}
-
-- (void)setDisabledButtonColor:(UIColor *)disabledButtonColor {
-    _disabledButtonColor = disabledButtonColor;
-    
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
-        NYAlertAction *action = self.actions[idx];
-        
-        if (!action.enabled) {
-            [button setBackgroundColor:disabledButtonColor forState:UIControlStateNormal];
-        }
-    }];
-}
-
-- (void)setButtonTitleColor:(UIColor *)buttonTitleColor {
-    _buttonTitleColor = buttonTitleColor;
-    
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
-        NYAlertAction *action = self.actions[idx];
-        
-        if (action.style != UIAlertActionStyleCancel) {
-            [button setTitleColor:buttonTitleColor forState:UIControlStateNormal];
-            [button setTitleColor:buttonTitleColor forState:UIControlStateHighlighted];
-        }
-    }];
-}
-
-- (void)setCancelButtonTitleColor:(UIColor *)cancelButtonTitleColor {
-    _cancelButtonTitleColor = cancelButtonTitleColor;
-    
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
-        NYAlertAction *action = self.actions[idx];
-        
-        if (action.style == UIAlertActionStyleCancel) {
-            [button setTitleColor:cancelButtonTitleColor forState:UIControlStateNormal];
-            [button setTitleColor:cancelButtonTitleColor forState:UIControlStateHighlighted];
-        }
-    }];
-}
-
-- (void)setDestructiveButtonTitleColor:(UIColor *)destructiveButtonTitleColor {
-    _destructiveButtonTitleColor = destructiveButtonTitleColor;
-    
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
-        NYAlertAction *action = self.actions[idx];
-        
-        if (action.style == UIAlertActionStyleDestructive) {
-            [button setTitleColor:destructiveButtonTitleColor forState:UIControlStateNormal];
-            [button setTitleColor:destructiveButtonTitleColor forState:UIControlStateHighlighted];
-        }
-    }];
-}
-
-- (void)setDisabledButtonTitleColor:(UIColor *)disabledButtonTitleColor {
-    _disabledButtonTitleColor = disabledButtonTitleColor;
-    
-    [self.view.actionButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
-        NYAlertAction *action = self.actions[idx];
-        
-        if (!action.enabled) {
-            [button setTitleColor:disabledButtonTitleColor forState:UIControlStateNormal];
-            [button setTitleColor:disabledButtonTitleColor forState:UIControlStateHighlighted];
-        }
-    }];
+    self.alertView.messageTextView.textColor = messageColor;
 }
 
 - (CGFloat)alertViewCornerRadius {
-    return self.view.alertBackgroundView.layer.cornerRadius;
+    return self.alertView.alertBackgroundView.layer.cornerRadius;
 }
 
 - (void)setAlertViewCornerRadius:(CGFloat)alertViewCornerRadius {
-    self.view.alertBackgroundView.layer.cornerRadius = alertViewCornerRadius;
+    self.alertView.alertBackgroundView.layer.cornerRadius = alertViewCornerRadius;
 }
 
 - (void)setButtonCornerRadius:(CGFloat)buttonCornerRadius {
     _buttonCornerRadius = buttonCornerRadius;
     
-    for (NYAlertViewButton *button in self.view.actionButtons) {
+    for (NYAlertViewButton *button in self.alertView.actionButtons) {
         button.cornerRadius = buttonCornerRadius;
     }
 }
 
-- (void)addAction:(UIAlertAction *)action {
+- (void)setActionButtonTitleFont:(UIFont *)buttonTitleFont forStyle:(NYAlertActionStyle)style {
+    
+    switch (style) {
+        case NYAlertActionStyleDefault: {
+            _buttonTitleFont = buttonTitleFont;
+            break;
+        }
+        case NYAlertActionStyleCancel: {
+            _cancelButtonTitleFont = buttonTitleFont;
+            break;
+        }
+        case NYAlertActionStyleDestructive: {
+            _destructiveButtonTitleFont = buttonTitleFont;
+            break;
+        }
+    }
+    
+    [self.alertView.actionButtons enumerateObjectsUsingBlock:^(NYAlertViewButton * button, NSUInteger idx, BOOL *stop) {
+        NYAlertAction *action = self.actions[idx];
+        
+        if (style == action.style) {
+            button.titleLabel.font = buttonTitleFont;
+        }
+    }];
+}
+
+- (void)setActionButtonBackgroundColor:(UIColor *)backgroundColor forStyle:(NYAlertActionStyle)style state:(UIControlState)state {
+    
+    if (state == UIControlStateNormal) {
+        switch (style) {
+            case NYAlertActionStyleDefault: {
+                self.buttonColorForStateDictionary[@(state)] = backgroundColor;
+                break;
+            }
+            case NYAlertActionStyleCancel: {
+                self.cancelButtonColorForStateDictionary[@(state)] = backgroundColor;
+                break;
+            }
+            case NYAlertActionStyleDestructive: {
+                self.destructiveButtonColorForStateDictionary[@(state)] = backgroundColor;
+                break;
+            }
+        }
+    }
+    
+    [self.alertView.actionButtons enumerateObjectsUsingBlock:^(NYAlertViewButton * button, NSUInteger idx, BOOL *stop) {
+        NYAlertAction *action = self.actions[idx];
+        
+        if (style == action.style) {
+            [button setBackgroundColor:backgroundColor forState:state];
+        }
+    }];
+}
+
+- (void)setActionButtonBackgroundImage:(UIImage *)backgroundImage forStyle:(NYAlertActionStyle)style state:(UIControlState)state {
+    
+    if (state == UIControlStateNormal) {
+        switch (style) {
+            case NYAlertActionStyleDefault: {
+                self.buttonBackgroundImageForStateDictionary[@(state)] = backgroundImage;
+                break;
+            }
+            case NYAlertActionStyleCancel: {
+                self.cancelButtonBackgroundImageForStateDictionary[@(state)] = backgroundImage;
+                break;
+            }
+            case NYAlertActionStyleDestructive: {
+                self.destructiveButtonBackgroundImageForStateDictionary[@(state)] = backgroundImage;
+                break;
+            }
+        }
+    }
+    
+    [self.alertView.actionButtons enumerateObjectsUsingBlock:^(NYAlertViewButton * button, NSUInteger idx, BOOL *stop) {
+        NYAlertAction *action = self.actions[idx];
+        
+        if (style == action.style) {
+            [button setBackgroundImage:backgroundImage forState:state];
+        }
+    }];
+}
+
+- (void)setActionButtonTitleColor:(UIColor *)titleColor forStyle:(NYAlertActionStyle)style state:(UIControlState)state {
+    
+    if (state == UIControlStateNormal) {
+        switch (style) {
+            case NYAlertActionStyleDefault: {
+                self.buttonTitleColorForStateDictionary[@(state)] = titleColor;
+                break;
+            }
+            case NYAlertActionStyleCancel: {
+                self.cancelButtonTitleColorForStateDictionary[@(state)] = titleColor;
+                break;
+            }
+            case NYAlertActionStyleDestructive: {
+                self.destructiveButtonTitleColorForStateDictionary[@(state)] = titleColor;
+                break;
+            }
+        }
+    }
+    
+    [self.alertView.actionButtons enumerateObjectsUsingBlock:^(NYAlertViewButton * button, NSUInteger idx, BOOL *stop) {
+        NYAlertAction *action = self.actions[idx];
+        
+        if (style == action.style) {
+            [button setTitleColor:titleColor forState:state];
+        }
+    }];
+}
+
+- (void)addAction:(NYAlertAction *)action {
     _actions = [self.actions arrayByAddingObject:action];
 }
 
@@ -806,15 +870,6 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 
 #pragma mark - UIViewControllerTransitioningDelegate
 
-- (UIPresentationController *)presentationControllerForPresentedViewController:(UIViewController *)presented
-                                                      presentingViewController:(UIViewController *)presenting
-                                                          sourceViewController:(UIViewController *)source {
-    NYAlertViewPresentationController *presentationController = [[NYAlertViewPresentationController alloc] initWithPresentedViewController:presented
-                                                                                                                  presentingViewController:presenting];
-    presentationController.backgroundTapDismissalGestureEnabled = self.backgroundTapDismissalGestureEnabled;
-    return presentationController;
-}
-
 - (id <UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented
                                                                    presentingController:(UIViewController *)presenting
                                                                        sourceController:(UIViewController *)source {
@@ -832,6 +887,16 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 #pragma mark - UIGestureRecognizerDelegate
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    
+    if ([gestureRecognizer isEqual:self.tapGestureRecognizer]) {
+        UIView *alertBackgroundView = self.alertView.alertBackgroundView;
+        CGPoint touchPoint = [touch locationInView:self.view];
+        CGRect alertBackgroundViewAbsoluteFrame = [alertBackgroundView convertRect:alertBackgroundView.bounds toView:self.view];
+        if (CGRectContainsPoint(alertBackgroundViewAbsoluteFrame, touchPoint)) {
+            return NO;
+        }
+    }
+    
     // Don't recognize the pan gesture in the button, so users can move their finger away after touching down
     if (([touch.view isKindOfClass:[UIButton class]])) {
         return NO;

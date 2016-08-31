@@ -7,8 +7,6 @@
 
 #import "NYAlertView.h"
 
-//#import "NYAlertViewController.h"
-
 @implementation NYAlertTextView
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {

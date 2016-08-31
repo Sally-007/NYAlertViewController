@@ -8,12 +8,19 @@
 #import <UIKit/UIKit.h>
 #import "NYAlertViewLayout.h"
 
+
+typedef NS_ENUM(NSInteger, NYAlertActionStyle) {
+    NYAlertActionStyleDefault = 0,
+    NYAlertActionStyleCancel,
+    NYAlertActionStyleDestructive
+};
+
 @interface NYAlertAction : NSObject
 
-+ (instancetype)actionWithTitle:(NSString *)title style:(UIAlertActionStyle)style handler:(void (^)(NYAlertAction *action))handler;
++ (instancetype)actionWithTitle:(NSString *)title style:(NYAlertActionStyle)style handler:(void (^)(NYAlertAction *action))handler;
 
 @property (nonatomic) NSString *title;
-@property (nonatomic) UIAlertActionStyle style;
+@property (nonatomic) NYAlertActionStyle style;
 @property (nonatomic, strong) void (^handler)(NYAlertAction *action);
 @property (nonatomic) BOOL enabled;
 
@@ -125,21 +132,6 @@ typedef NS_ENUM(NSInteger, NYAlertViewControllerTransitionStyle) {
 @property (nonatomic) UIFont *messageFont;
 
 /**
- The font used for buttons (actions with style NYAlertActionStyleDefault) in the alert view
- */
-@property (nonatomic) UIFont *buttonTitleFont;
-
-/**
- The font used for cancel buttons (actions with style NYAlertActionStyleCancel) in the alert view
- */
-@property (nonatomic) UIFont *cancelButtonTitleFont;
-
-/**
- The font used for destructive buttons (actions with style NYAlertActionStyleDestructive) in the alert view
- */
-@property (nonatomic) UIFont *destructiveButtonTitleFont;
-
-/**
  The color used to display the alert view's title
  
  @see title
@@ -154,46 +146,6 @@ typedef NS_ENUM(NSInteger, NYAlertViewControllerTransitionStyle) {
 @property (nonatomic) UIColor *messageColor;
 
 /**
- The background color for the alert view's buttons corresponsing to default style actions
- */
-@property (nonatomic) UIColor *buttonColor;
-
-/**
- The background color for the alert view's buttons corresponsing to cancel style actions
- */
-@property (nonatomic) UIColor *cancelButtonColor;
-
-/**
- The background color for the alert view's buttons corresponsing to destructive style actions
- */
-@property (nonatomic) UIColor *destructiveButtonColor;
-
-/**
- The background color for the alert view's buttons corresponsing to disabled actions
- */
-@property (nonatomic) UIColor *disabledButtonColor;
-
-/**
- The color used to display the title for buttons corresponsing to default style actions
- */
-@property (nonatomic) UIColor *buttonTitleColor;
-
-/**
- The color used to display the title for buttons corresponding to cancel style actions
- */
-@property (nonatomic) UIColor *cancelButtonTitleColor;
-
-/**
- The color used to display the title for buttons corresponsing to destructive style actions
- */
-@property (nonatomic) UIColor *destructiveButtonTitleColor;
-
-/**
- The color used to display the title for buttons corresponsing to disabled actions
- */
-@property (nonatomic) UIColor *disabledButtonTitleColor;
-
-/**
  The radius of the displayed alert view's corners
  */
 @property (nonatomic) CGFloat alertViewCornerRadius;
@@ -206,7 +158,7 @@ typedef NS_ENUM(NSInteger, NYAlertViewControllerTransitionStyle) {
 /**
  An array of NYAlertAction objects representing the actions that the user can take in response to the alert view
  */
-@property (nonatomic, readonly) NSArray *actions;
+@property (nonatomic, readonly) NSArray<NYAlertAction *> *actions;
 
 /**
  An array of UITextField objects displayed by the alert view
@@ -214,6 +166,41 @@ typedef NS_ENUM(NSInteger, NYAlertViewControllerTransitionStyle) {
  @see addTextFieldWithConfigurationHandler:
  */
 @property (nonatomic, readonly) NSArray *textFields;
+
+/**
+ *  set the font used for buttons in the alert view
+ *
+ *  @param buttonTitleFont
+ *  @param style
+ */
+- (void)setActionButtonTitleFont:(UIFont *)buttonTitleFont forStyle:(NYAlertActionStyle)style;
+
+/**
+ *  set the backgroundColor used for buttons in the alert view
+ *
+ *  @param backgroundColor
+ *  @param style
+ *  @param state
+ */
+- (void)setActionButtonBackgroundColor:(UIColor *)backgroundColor forStyle:(NYAlertActionStyle)style state:(UIControlState)state;
+
+/**
+ *  set the backgroundImage used for buttons in the alert view
+ *
+ *  @param backgroundImage
+ *  @param style
+ *  @param state
+ */
+- (void)setActionButtonBackgroundImage:(UIImage *)backgroundImage forStyle:(NYAlertActionStyle)style state:(UIControlState)state;
+
+/**
+ *  set the title's color for buttons in alert action button
+ *
+ *  @param titleColor
+ *  @param style
+ *  @param state
+ */
+- (void)setActionButtonTitleColor:(UIColor *)titleColor forStyle:(NYAlertActionStyle)style state:(UIControlState)state;
 
 /**
  Add an alert action object to be displayed in the alert view
