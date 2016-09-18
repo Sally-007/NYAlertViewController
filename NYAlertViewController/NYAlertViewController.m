@@ -8,6 +8,8 @@
 #import "NYAlertViewController.h"
 #import "NYAlertView.h"
 
+#define NYAlert_iOS8Later ([UIDevice currentDevice].systemVersion.doubleValue >= 8.0)
+
 @interface NYAlertAction ()
 
 @property (weak, nonatomic) UIButton *actionButton;
@@ -68,7 +70,13 @@ static CGFloat const kDefaultPresentationAnimationDuration = 0.7f;
     if (self.transitionStyle == NYAlertViewControllerTransitionStyleSlideFromTop || self.transitionStyle == NYAlertViewControllerTransitionStyleSlideFromBottom) {
         UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
         
-        CGRect initialFrame = [transitionContext finalFrameForViewController:toViewController];
+        CGRect initialFrame;
+        if (NYAlert_iOS8Later) {
+            initialFrame = [transitionContext finalFrameForViewController:toViewController];
+        } else {
+            UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+            initialFrame = [transitionContext finalFrameForViewController:fromViewController];
+        }
         
         initialFrame.origin.y = self.transitionStyle == NYAlertViewControllerTransitionStyleSlideFromTop ? -(initialFrame.size.height + initialFrame.origin.y) : (initialFrame.size.height + initialFrame.origin.y);
         toViewController.view.frame = initialFrame;
@@ -91,7 +99,15 @@ static CGFloat const kDefaultPresentationAnimationDuration = 0.7f;
     } else {
         UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
         
-        toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
+        CGRect finalFrame;
+        if (NYAlert_iOS8Later) {
+            finalFrame = [transitionContext finalFrameForViewController:toViewController];
+        } else {
+            UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+            finalFrame = [transitionContext finalFrameForViewController:fromViewController];
+        }
+        
+        toViewController.view.frame = finalFrame;
         [[transitionContext containerView] addSubview:toViewController.view];
         
         toViewController.view.layer.transform = CATransform3DMakeScale(1.2f, 1.2f, 1.2f);
@@ -255,15 +271,12 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 @property (nonatomic) NYAlertView *alertView;
 @property (nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
 @property (nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
-@property (nonatomic, strong) id<UIViewControllerTransitioningDelegate> transitioningDelegate;
 
 - (void)panGestureRecognized:(UIPanGestureRecognizer *)gestureRecognizer;
 
 @end
 
 @implementation NYAlertViewController
-
-@dynamic view;
 
 + (instancetype)alertControllerWithTitle:(NSString *)title message:(NSString *)message {
     NYAlertViewController *alertController = [[NYAlertViewController alloc] initWithNibName:nil bundle:nil];
@@ -349,11 +362,10 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 }
 
 - (void)loadView {
-    CGRect screenBounds = [UIScreen mainScreen].bounds;
-    self.view = [[UIView alloc]initWithFrame:screenBounds];
+    self.view = [[UIView alloc]initWithFrame:CGRectZero];
     
     self.backgroundDimmingView = ({
-        UIView *dimmingView = [[UIView alloc]initWithFrame:screenBounds];
+        UIView *dimmingView = [[UIView alloc]initWithFrame:CGRectZero];
         dimmingView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         dimmingView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
         dimmingView;
@@ -361,7 +373,7 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     [self.view addSubview:self.backgroundDimmingView];
     
     self.alertView = ({
-        NYAlertView *aView = [[NYAlertView alloc]initWithFrame:screenBounds];
+        NYAlertView *aView = [[NYAlertView alloc]initWithFrame:CGRectZero];
         aView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         aView;
     });
