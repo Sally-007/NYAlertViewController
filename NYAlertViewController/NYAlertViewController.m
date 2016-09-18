@@ -349,10 +349,11 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 }
 
 - (void)loadView {
-    self.view = [[UIView alloc]initWithFrame:CGRectZero];
+    CGRect screenBounds = [UIScreen mainScreen].bounds;
+    self.view = [[UIView alloc]initWithFrame:screenBounds];
     
     self.backgroundDimmingView = ({
-        UIView *dimmingView = [[UIView alloc]initWithFrame:CGRectZero];
+        UIView *dimmingView = [[UIView alloc]initWithFrame:screenBounds];
         dimmingView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         dimmingView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
         dimmingView;
@@ -360,7 +361,7 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     [self.view addSubview:self.backgroundDimmingView];
     
     self.alertView = ({
-        NYAlertView *aView = [[NYAlertView alloc]initWithFrame:CGRectZero];
+        NYAlertView *aView = [[NYAlertView alloc]initWithFrame:screenBounds];
         aView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         aView;
     });
