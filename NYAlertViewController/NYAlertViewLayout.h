@@ -31,4 +31,7 @@
 
 @property (nonatomic) CGFloat verticalSpacingBetweenActionButtons;
 
+// 右上角按钮中心距离弹窗视图右上角的位置（内外的距离在水平和竖直方向上等同，正值代表内距，负值代表外距）
+@property (nonatomic) CGFloat cornerIconButtonCenterAlignAlertViewTopRightCorner;
+
 @end

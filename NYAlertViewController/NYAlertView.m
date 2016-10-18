@@ -285,6 +285,9 @@
 @property (nonatomic) NSLayoutConstraint *actionButtonContainerViewLeadingConstraint;
 @property (nonatomic) NSLayoutConstraint *actionButtonContainerViewTrailingConstraint;
 
+@property (nonatomic) NSLayoutConstraint *cornerIconButtonCenterXConstraint;
+@property (nonatomic) NSLayoutConstraint *cornerIconButtonCenterYConstraint;
+
 @end
 
 @implementation NYAlertView
@@ -309,6 +312,7 @@
         [self.alertBackgroundView setTranslatesAutoresizingMaskIntoConstraints:NO];
         self.alertBackgroundView.backgroundColor = [UIColor colorWithWhite:0.97f alpha:1.0f];
         self.alertBackgroundView.layer.cornerRadius = 6.0f;
+        self.alertBackgroundView.clipsToBounds = YES;
         [self addSubview:_alertBackgroundView];
         
         _titleViewContainerView = [[UIView alloc]initWithFrame:CGRectZero];
@@ -585,12 +589,21 @@
     
     _cornerIconButton = cornerIconButton;
     
+    _cornerIconButtonCenterXConstraint = nil;
+    _cornerIconButtonCenterYConstraint = nil;
+    
     if (cornerIconButton) {
         [self.cornerIconButton setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self addSubview:self.cornerIconButton];
         
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_cornerIconButton attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.alertBackgroundView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_cornerIconButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.alertBackgroundView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+        CGFloat align = self.layout.cornerIconButtonCenterAlignAlertViewTopRightCorner;
+        
+        _cornerIconButtonCenterXConstraint = [NSLayoutConstraint constraintWithItem:self.alertBackgroundView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:_cornerIconButton attribute:NSLayoutAttributeCenterX multiplier:1 constant:align];
+        
+        _cornerIconButtonCenterYConstraint = [NSLayoutConstraint constraintWithItem:_cornerIconButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.alertBackgroundView attribute:NSLayoutAttributeTop multiplier:1 constant:align];
+        
+        [self addConstraint:_cornerIconButtonCenterXConstraint];
+        [self addConstraint:_cornerIconButtonCenterYConstraint];
     }
 }
 
@@ -843,6 +856,10 @@
     self.actionButtonContainerViewLeadingConstraint.constant = layout.actionButtonContainerViewEdgeInsets.left;
     self.actionButtonContainerViewTrailingConstraint.constant = layout.actionButtonContainerViewEdgeInsets.right;
     self.actionButtonContainerViewBottomConstraint.constant = layout.actionButtonContainerViewEdgeInsets.bottom;
+    
+    _cornerIconButtonCenterXConstraint.constant = layout.cornerIconButtonCenterAlignAlertViewTopRightCorner;
+    _cornerIconButtonCenterYConstraint.constant = layout.cornerIconButtonCenterAlignAlertViewTopRightCorner;
+    
 }
 
 @end
