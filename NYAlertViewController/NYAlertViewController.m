@@ -781,32 +781,30 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 
 - (void)setActionButtonBackgroundColor:(UIColor *)backgroundColor forStyle:(NYAlertActionStyle)style state:(UIControlState)state {
     
-    if (state == UIControlStateNormal) {
-        switch (style) {
-            case NYAlertActionStyleDefault: {
-                if (backgroundColor) {
-                    self.buttonColorForStateDictionary[@(state)] = backgroundColor;
-                } else {
-                    [self.buttonColorForStateDictionary removeObjectForKey:@(state)];
-                }
-                break;
+    switch (style) {
+        case NYAlertActionStyleDefault: {
+            if (backgroundColor) {
+                self.buttonColorForStateDictionary[@(state)] = backgroundColor;
+            } else {
+                [self.buttonColorForStateDictionary removeObjectForKey:@(state)];
             }
-            case NYAlertActionStyleCancel: {
-                if (backgroundColor) {
-                    self.cancelButtonColorForStateDictionary[@(state)] = backgroundColor;
-                } else {
-                    [self.cancelButtonColorForStateDictionary removeObjectForKey:@(state)];
-                }
-                break;
+            break;
+        }
+        case NYAlertActionStyleCancel: {
+            if (backgroundColor) {
+                self.cancelButtonColorForStateDictionary[@(state)] = backgroundColor;
+            } else {
+                [self.cancelButtonColorForStateDictionary removeObjectForKey:@(state)];
             }
-            case NYAlertActionStyleDestructive: {
-                if (backgroundColor) {
-                    self.destructiveButtonColorForStateDictionary[@(state)] = backgroundColor;
-                } else {
-                    [self.destructiveButtonColorForStateDictionary removeObjectForKey:@(state)];
-                }
-                break;
+            break;
+        }
+        case NYAlertActionStyleDestructive: {
+            if (backgroundColor) {
+                self.destructiveButtonColorForStateDictionary[@(state)] = backgroundColor;
+            } else {
+                [self.destructiveButtonColorForStateDictionary removeObjectForKey:@(state)];
             }
+            break;
         }
     }
     

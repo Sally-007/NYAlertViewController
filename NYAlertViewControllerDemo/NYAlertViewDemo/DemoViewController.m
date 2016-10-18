@@ -359,11 +359,16 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
 //    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_gold"] forStyle:NYAlertActionStyleDefault state:UIControlStateNormal];
 //    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_gold_hl"] forStyle:NYAlertActionStyleDefault state:UIControlStateHighlighted];
 //    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_disable"] forStyle:NYAlertActionStyleDefault state:UIControlStateDisabled];
-
     
     [alertViewController setActionButtonBackgroundColor:[UIColor whiteColor] forStyle:NYAlertActionStyleCancel state:UIControlStateNormal];
+    [alertViewController setActionButtonBackgroundColor:[UIColor whiteColor] forStyle:NYAlertActionStyleCancel state:UIControlStateHighlighted];
+    [alertViewController setActionButtonBackgroundColor:[UIColor whiteColor] forStyle:NYAlertActionStyleCancel state:UIControlStateDisabled];
     
     [alertViewController setActionButtonBackgroundColor:[UIColor colorWithRed:0xc1/255.f green:0xab/255.f blue:0x79/255.f alpha:1] forStyle:NYAlertActionStyleDefault state:UIControlStateNormal];
+    [alertViewController setActionButtonBackgroundColor:[UIColor colorWithRed:0xc1/255.f green:0xab/255.f blue:0x79/255.f alpha:1] forStyle:NYAlertActionStyleDefault state:UIControlStateHighlighted];
+    [alertViewController setActionButtonBackgroundColor:[UIColor colorWithRed:0xc1/255.f green:0xab/255.f blue:0x79/255.f alpha:1] forStyle:NYAlertActionStyleDefault state:UIControlStateDisabled];
+    
+    
     
     [alertViewController setActionButtonTitleColor:[UIColor colorWithRed:0x66/255.f green:0x66/255.f blue:0x66/255.f alpha:1] forStyle:NYAlertActionStyleCancel state:UIControlStateNormal];
     [alertViewController setActionButtonTitleColor:[UIColor whiteColor] forStyle:NYAlertActionStyleDefault state:UIControlStateNormal];
