@@ -383,7 +383,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     alertViewController.alertViewCornerRadius = 2.f;
     
     [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(NYAlertViewController *alertViewController, UIButton *iconButton) {
-        [iconButton setImage:[UIImage imageNamed:@"close_w"] forState:UIControlStateNormal];
+        [iconButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
         [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
     }];
     
