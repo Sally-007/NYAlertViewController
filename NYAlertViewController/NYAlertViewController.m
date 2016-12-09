@@ -743,6 +743,7 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
 
 - (void)setAlertViewCornerRadius:(CGFloat)alertViewCornerRadius {
     self.alertView.alertBackgroundView.layer.cornerRadius = alertViewCornerRadius;
+    self.alertView.alertBackgroundView.layer.masksToBounds = YES;
 }
 
 - (void)setButtonCornerRadius:(CGFloat)buttonCornerRadius {
