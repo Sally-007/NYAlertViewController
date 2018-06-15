@@ -16,21 +16,32 @@
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame textContainer:(NSTextContainer *)textContainer {
-    self = [super initWithFrame:frame textContainer:textContainer];
+- (instancetype)initWithFrame:(CGRect)frame{
+    self = [super initWithFrame:frame];
     
-    self.textContainerInset = UIEdgeInsetsZero;
     [self commonInit];
     
     return self;
 }
+//
+//- (instancetype)initWithFrame:(CGRect)frame textContainer:(NSTextContainer *)textContainer {
+//    self = [super initWithFrame:frame textContainer:textContainer];
+//
+//    self.textContainerInset = UIEdgeInsetsZero;
+//    [self commonInit];
+//
+//    return self;
+//}
 
 - (void)commonInit {
     self.backgroundColor = [UIColor clearColor];
-    self.editable = NO;
-    self.textAlignment = NSTextAlignmentCenter;
+//    self.editable = NO;
+    self.textAlignment = NSTextAlignmentLeft;
     self.textColor = [UIColor darkGrayColor];
+    self.numberOfLines = 0;
+    self.lineBreakMode = NSLineBreakByWordWrapping;
     self.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
+//    self.scrollEnabled = NO;
 }
 
 - (void)layoutSubviews {
@@ -41,13 +52,13 @@
     }
 }
 
-- (CGSize)intrinsicContentSize {
-    if ([self.text length]) {
-        return self.contentSize;
-    } else {
-        return CGSizeZero;
-    }
-}
+//- (CGSize)intrinsicContentSize {
+//    if ([self.text length]) {
+//        return self.contentSize;
+//    } else {
+//        return CGSizeZero;
+//    }
+//}
 
 @end
 
@@ -257,12 +268,13 @@
 
 @interface NYAlertView ()
 
-@property (nonatomic) NSLayoutConstraint *alertBackgroundWidthConstraint;
 @property (nonatomic) UIView *titleViewContainerView;
 @property (nonatomic) UIView *messageTextViewContainerView;
 @property (nonatomic) UIView *contentViewContainerView;
 @property (nonatomic) UIView *textFieldContainerView;
 @property (nonatomic) UIView *actionButtonContainerView;
+
+@property (nonatomic) NSLayoutConstraint *alertBackgroundWidthConstraint;
 
 @property (nonatomic) NSLayoutConstraint *titleViewContainerViewTopConstraint;
 @property (nonatomic) NSLayoutConstraint *titleViewContainerViewLeadingConstraint;
@@ -321,6 +333,8 @@
         [self.alertBackgroundView addSubview:self.titleViewContainerView];
         
         _messageTextViewContainerView = [[UIView alloc]initWithFrame:CGRectZero];
+        [self.messageTextViewContainerView setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh+1 forAxis:UILayoutConstraintAxisVertical];
+        [self.messageTextViewContainerView setContentHuggingPriority:UILayoutPriorityDefaultHigh+1 forAxis:UILayoutConstraintAxisVertical];
         [self.messageTextViewContainerView setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self.messageTextViewContainerView setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
         [self.alertBackgroundView addSubview:self.messageTextViewContainerView];
@@ -636,9 +650,12 @@
         [self.messageTextView setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self.messageTextViewContainerView addSubview:self.messageTextView];
 
-        [self.messageTextViewContainerView addConstraint:[NSLayoutConstraint constraintWithItem:_messageTextView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.messageTextViewContainerView attribute:NSLayoutAttributeLeading multiplier:1 constant:0]];
+//        [self.messageTextViewContainerView addConstraint:[NSLayoutConstraint constraintWithItem:_messageTextView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.messageTextViewContainerView attribute:NSLayoutAttributeLeading multiplier:1 constant:0]];
+        [self.messageTextViewContainerView addConstraint:[NSLayoutConstraint constraintWithItem:_messageTextView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.messageTextViewContainerView attribute:NSLayoutAttributeLeading multiplier:1 constant:0]];
+        [self.messageTextViewContainerView addConstraint:[NSLayoutConstraint constraintWithItem:_messageTextView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.messageTextViewContainerView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
         
-        [self.messageTextViewContainerView addConstraint:[NSLayoutConstraint constraintWithItem:_messageTextView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.messageTextViewContainerView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+//        [self.messageTextViewContainerView addConstraint:[NSLayoutConstraint constraintWithItem:_messageTextView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.messageTextViewContainerView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+        [self.messageTextViewContainerView addConstraint:[NSLayoutConstraint constraintWithItem:_messageTextView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.messageTextViewContainerView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
         [self.messageTextViewContainerView addConstraint:[NSLayoutConstraint constraintWithItem:_messageTextView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.messageTextViewContainerView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
         
@@ -848,6 +865,8 @@
     self.contentViewContainerViewLeadingConstraint.constant = layout.contentViewEdgeInsets.left;
     self.contentViewContainerViewTrailingConstraint.constant = layout.contentViewEdgeInsets.right;
     
+    self.backgroundViewVerticalCenteringConstraint.constant = layout.centeringInsets.top > 0 ? (-layout.centeringInsets.top) : (layout.centeringInsets.bottom > 0 ? layout.centeringInsets.bottom : 0);
+
     self.textFieldContainerViewTopConstraint.constant = MAX(layout.contentViewEdgeInsets.bottom, layout.textFieldContainerViewEdgeInsets.top);
     self.textFieldContainerViewLeadingConstraint.constant = layout.textFieldContainerViewEdgeInsets.left;
     self.textFieldContainerViewTrailingConstraint.constant = layout.textFieldContainerViewEdgeInsets.right;

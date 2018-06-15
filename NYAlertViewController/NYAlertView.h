@@ -10,7 +10,7 @@
 /**
  *  给定默认设置的 textView
  */
-@interface NYAlertTextView : UITextView
+@interface NYAlertTextView : UILabel
 
 @end
 

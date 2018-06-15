@@ -691,6 +691,31 @@ static CGFloat const kDefaultDismissalAnimationDuration = 0.6f;
     self.alertView.messageTextView.font = messageFont;
 }
 
+- (void)setMessgaeLineSpacing:(CGFloat)messgaeLineSpacing{
+    _messgaeLineSpacing = messgaeLineSpacing;
+}
+
+- (void)reloadMessageStyle{
+    if (self.messgaeLineSpacing < 0.01 || self.message.length == 0) {
+        return;
+    }
+    
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.message];
+    if (self.messageFont) {
+        [attributedString addAttribute:NSFontAttributeName value:self.messageFont range:NSMakeRange(0, [self.message length])];
+    }
+    if (self.messageColor) {
+        [attributedString addAttribute:NSForegroundColorAttributeName value:self.messageColor range:NSMakeRange(0, [self.message length])];
+    }
+    
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineSpacing:self.messgaeLineSpacing];
+    [paragraphStyle setAlignment:self.alertView.messageTextView.textAlignment];
+    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [self.message length])];
+    
+    self.alertView.messageTextView.attributedText = attributedString;
+}
+
 - (void)setButtonTitleFont:(UIFont *)buttonTitleFont {
     _buttonTitleFont = buttonTitleFont;
     

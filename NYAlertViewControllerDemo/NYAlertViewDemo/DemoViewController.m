@@ -50,6 +50,9 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:16.f];
     alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Regular" size:14.f];
+    alertViewController.messgaeLineSpacing = 50.f;
+    alertViewController.messageColor = [UIColor redColor];
+    [alertViewController reloadMessageStyle];
 //    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
 //    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
     
@@ -130,6 +133,7 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     
     alertViewController.alertViewlayout = ({
         NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
+        lout.centeringInsets = UIEdgeInsetsMake(100, 0, 0, 0);
         lout.titleViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
         lout.messageTextViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
         lout.textFieldContainerViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
@@ -284,7 +288,76 @@ static NSString * const kTableViewCellReuseIdentifier = @"kTableViewCellReuseIde
     [self presentViewController:alertViewController animated:YES completion:nil];
 }
 
-- (void)showCustomUIAlertView {
+//TODO:-
+- (void)showCustomUIAlertView{
+    NYAlertViewController *alertViewController = [[NYAlertViewController alloc] initWithNibName:nil bundle:nil];
+//    alertViewController.titleImage = [UIImage imageNamed:@"more_collection"];
+    alertViewController.message = @"title with image.  ";
+    
+    alertViewController.view.tintColor = self.view.tintColor;
+    alertViewController.backgroundTapDismissalGestureEnabled = YES;
+    alertViewController.swipeDismissalGestureEnabled = YES;
+    alertViewController.transitionStyle = NYAlertViewControllerTransitionStyleFade;
+    
+    alertViewController.titleFont = [UIFont fontWithName:@"AvenirNext-Bold" size:16.f];
+    alertViewController.messageFont = [UIFont fontWithName:@"AvenirNext-Regular" size:14.f];
+    //    alertViewController.buttonTitleFont = [UIFont fontWithName:@"AvenirNext-Regular" size:16.f];
+    //    alertViewController.cancelButtonTitleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:16.f];
+    //    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_white"] forStyle:NYAlertActionStyleCancel state:UIControlStateNormal];
+    //    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_white_hl"] forStyle:NYAlertActionStyleCancel state:UIControlStateHighlighted];
+    //
+    //    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_gold"] forStyle:NYAlertActionStyleDefault state:UIControlStateNormal];
+    //    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_gold_hl"] forStyle:NYAlertActionStyleDefault state:UIControlStateHighlighted];
+    //    [alertViewController setActionButtonBackgroundImage:[UIImage imageNamed:@"btn_disable"] forStyle:NYAlertActionStyleDefault state:UIControlStateDisabled];
+    
+    [alertViewController setActionButtonBackgroundColor:[UIColor whiteColor] forStyle:NYAlertActionStyleCancel state:UIControlStateNormal];
+    [alertViewController setActionButtonBackgroundColor:[UIColor whiteColor] forStyle:NYAlertActionStyleCancel state:UIControlStateHighlighted];
+    [alertViewController setActionButtonBackgroundColor:[UIColor whiteColor] forStyle:NYAlertActionStyleCancel state:UIControlStateDisabled];
+    
+    [alertViewController setActionButtonBackgroundColor:[UIColor colorWithRed:0xc1/255.f green:0xab/255.f blue:0x79/255.f alpha:1] forStyle:NYAlertActionStyleDefault state:UIControlStateNormal];
+    [alertViewController setActionButtonBackgroundColor:[UIColor colorWithRed:0xc1/255.f green:0xab/255.f blue:0x79/255.f alpha:1] forStyle:NYAlertActionStyleDefault state:UIControlStateHighlighted];
+    [alertViewController setActionButtonBackgroundColor:[UIColor colorWithRed:0xc1/255.f green:0xab/255.f blue:0x79/255.f alpha:1] forStyle:NYAlertActionStyleDefault state:UIControlStateDisabled];
+    
+    
+    
+    [alertViewController setActionButtonTitleColor:[UIColor colorWithRed:0x66/255.f green:0x66/255.f blue:0x66/255.f alpha:1] forStyle:NYAlertActionStyleCancel state:UIControlStateNormal];
+    [alertViewController setActionButtonTitleColor:[UIColor whiteColor] forStyle:NYAlertActionStyleDefault state:UIControlStateNormal];
+    
+    [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil)
+                                                            style:NYAlertActionStyleCancel
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
+                                                              [self dismissViewControllerAnimated:YES completion:nil];
+                                                          }]];
+    
+    [alertViewController addAction:[NYAlertAction actionWithTitle:NSLocalizedString(@"Ok", nil)
+                                                            style:NYAlertActionStyleDefault
+                                                          handler:^(NYAlertViewController *alertViewController, NYAlertAction *action) {
+                                                              [self dismissViewControllerAnimated:YES completion:nil];
+                                                          }]];
+    alertViewController.buttonCornerRadius = 0.f;
+    alertViewController.alertViewCornerRadius = 2.f;
+    
+    [alertViewController setDisplayAlertViewCornerIconButtonWithConfigurationBlock:^(NYAlertViewController *alertViewController, UIButton *iconButton) {
+        [iconButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
+        [iconButton addTarget:self action:@selector(dismissAlertView) forControlEvents:UIControlEventTouchUpInside];
+    }];
+    
+    alertViewController.alertViewlayout = ({
+        NYAlertViewLayout *lout = [[NYAlertViewLayout alloc]init];
+        lout.titleViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.messageTextViewEdgeInsets = UIEdgeInsetsMake(20, 20, 0, 20);
+        lout.actionButtonContainerViewEdgeInsets = UIEdgeInsetsMake(20, 0, 0, 0);
+        lout.actionButtonHeight = 45.f;
+        lout.horizonSpacingBetweenActionButtons = 0;
+        lout.verticalSpacingBetweenActionButtons = 8.f;
+        lout.cornerIconButtonCenterAlignAlertViewTopRightCorner = 20.f;
+        lout;
+    });
+    
+    [self presentViewController:alertViewController animated:YES completion:nil];
+}
+
+- (void)showAACustomUIAlertView {
     NYAlertViewController *alertViewController = [[NYAlertViewController alloc] initWithNibName:nil bundle:nil];
 
     alertViewController.backgroundTapDismissalGestureEnabled = YES;

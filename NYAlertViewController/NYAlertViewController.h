@@ -147,6 +147,14 @@ typedef NS_ENUM(NSInteger, NYAlertViewControllerTransitionStyle) {
 @property (nonatomic) UIColor *messageColor;
 
 /**
+ The line space used to display the alert view's message
+ [Attention] once use this property, you need to call - (void)reloadMessageStyle;
+ 
+ @see message
+ */
+@property (nonatomic) CGFloat messgaeLineSpacing;
+
+/**
  The radius of the displayed alert view's corners
  */
 @property (nonatomic) CGFloat alertViewCornerRadius;
@@ -167,6 +175,14 @@ typedef NS_ENUM(NSInteger, NYAlertViewControllerTransitionStyle) {
  @see addTextFieldWithConfigurationHandler:
  */
 @property (nonatomic, readonly) NSArray *textFields;
+
+/**
+ Called after using 'messgaeLineSpacing' property whenever setting text.
+ !!!all other properties must be setted before this function called!!!
+ 
+ @see message
+ */
+- (void)reloadMessageStyle;
 
 /**
  *  set the font used for buttons in the alert view

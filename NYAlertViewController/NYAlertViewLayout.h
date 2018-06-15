@@ -19,6 +19,8 @@
 
 @property (nonatomic) UIEdgeInsets contentViewEdgeInsets;
 
+@property (nonatomic) UIEdgeInsets centeringInsets;
+
 @property (nonatomic) UIEdgeInsets textFieldContainerViewEdgeInsets;
 
 @property (nonatomic) CGFloat verticalSpacingBetweenActionTextFields;
